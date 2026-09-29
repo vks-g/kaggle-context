@@ -1,0 +1,16 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "kaggle-context",
+  "description": "Kaggle competition context for Claude.",
+  "owner": {
+    "name": "vks-g"
+  },
+  "plugins": [
+    {
+      "name": "kaggle-context",
+      "description": "Kaggle competition context for Claude: a skill that fetches any competition, plus a local MCP server.",
+      "source": "./",
+      "category": "data-science"
+    }
+  ]
+}
