@@ -1,5 +1,5 @@
 ---
-name: kaggle-context
+name: kctx
 description: Fetch and use context for any Kaggle competition, including the overview, evaluation metric, rules, data files, top discussions, winning solution write-ups and top public notebooks. Use when the user mentions a Kaggle competition by name or URL, asks about its rules, metric or data, or wants to start working on one.
 ---
 
@@ -18,8 +18,8 @@ If the user only gave a name, run `kctx search "<words>"` and confirm the slug w
 Check these in order and use the first one you find:
 
 1. A `kaggle-<slug>` skill. Use it directly.
-2. kaggle-context MCP tools (`get_brief`, `get_section`, `list_discussions`, …). Start with `get_brief`.
-3. A folder containing `CLAUDE.md` and `.kaggle-context/`. Read that `CLAUDE.md`.
+2. kctx MCP tools (`get_brief`, `get_section`, `list_discussions`, …). Start with `get_brief`.
+3. A folder containing `CLAUDE.md` and `.kctx/`. Read that `CLAUDE.md`.
 
 ## 3. Otherwise, fetch it
 
@@ -27,7 +27,7 @@ Check these in order and use the first one you find:
 kctx fetch <url-or-slug> --mode folder --out .
 ```
 
-If `kctx` isn't installed, run this instead: `uvx --from git+https://github.com/vks-g/kaggle-context kctx fetch <url-or-slug> --mode folder --out .`
+If `kctx` isn't installed, run this instead: `uvx --from git+https://github.com/vks-g/kctx kctx fetch <url-or-slug> --mode folder --out .`
 
 The fetch uses the user's own Kaggle credentials. If it fails with a credentials error, ask the user to run `kctx login`.
 

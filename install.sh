@@ -1,19 +1,19 @@
 #!/bin/sh
-# kaggle-context installer: installs the `kctx` command with uv, then asks you a few questions.
+# kctx installer: installs the `kctx` command with uv, then asks you a few questions.
 #
-#   curl -fsSL https://raw.githubusercontent.com/vks-g/kaggle-context/main/install.sh | sh
-#   curl -fsSL https://raw.githubusercontent.com/vks-g/kaggle-context/main/install.sh | sh -s -- <competition-url>
+#   curl -fsSL https://raw.githubusercontent.com/vks-g/kctx/main/install.sh | sh
+#   curl -fsSL https://raw.githubusercontent.com/vks-g/kctx/main/install.sh | sh -s -- <competition-url>
 #
 # Environment:
-#   KCTX_SPEC    what to install (default: the GitHub repo; e.g. "kaggle-context" once on PyPI)
+#   KCTX_SPEC    what to install (default: the GitHub repo; e.g. "kctx" once on PyPI)
 #   KCTX_NO_RUN  set to 1 to install without starting kctx
 set -eu
 
-SPEC="${KCTX_SPEC:-git+https://github.com/vks-g/kaggle-context}"
+SPEC="${KCTX_SPEC:-git+https://github.com/vks-g/kctx}"
 
 say() { printf '%s\n' "$*"; }
 die() {
-  printf 'kaggle-context: %s\n' "$*" >&2
+  printf 'kctx: %s\n' "$*" >&2
   exit 1
 }
 
@@ -34,7 +34,7 @@ if ! command -v uv >/dev/null 2>&1; then
 fi
 command -v uv >/dev/null 2>&1 || die "uv was installed but isn't on PATH yet; open a new terminal and re-run"
 
-say "Installing kaggle-context..."
+say "Installing kctx..."
 uv tool install --quiet --force --reinstall "$SPEC"
 
 BIN="$(uv tool dir --bin)"
