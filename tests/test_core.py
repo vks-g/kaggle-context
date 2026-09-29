@@ -5,19 +5,19 @@ from datetime import timedelta
 import pytest
 from conftest import SLUG, FakeClient
 
-from kaggle_context.core.budget import allocate, estimate_tokens, paginate, truncate
-from kaggle_context.core.cache import get_bundle, load_bundle
-from kaggle_context.core.client import ForbiddenError, NotFoundError
-from kaggle_context.core.fetch import (
+from kctx.core.budget import allocate, estimate_tokens, paginate, truncate
+from kctx.core.cache import get_bundle, load_bundle
+from kctx.core.client import ForbiddenError, NotFoundError
+from kctx.core.fetch import (
     CompetitionNotFound,
     FetchOptions,
     fetch_bundle,
     is_solution_title,
 )
-from kaggle_context.core.models import Bundle
-from kaggle_context.core.slug import parse_competition
-from kaggle_context.render.html2md import nest_headings, to_markdown
-from kaggle_context.render.notebook import ipynb_to_markdown
+from kctx.core.models import Bundle
+from kctx.core.slug import parse_competition
+from kctx.render.html2md import nest_headings, to_markdown
+from kctx.render.notebook import ipynb_to_markdown
 
 # -- slug ---------------------------------------------------------------------------------
 

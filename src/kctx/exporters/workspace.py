@@ -11,11 +11,12 @@ import shutil
 from pathlib import Path
 from typing import Any
 
-from kaggle_context.core.cache import notebook_path
-from kaggle_context.core.models import Bundle
-from kaggle_context.render import sections as r
+from kctx.core.cache import notebook_path
+from kctx.core.models import Bundle
+from kctx.render import sections as r
 
-MANIFEST = ".kaggle-context/manifest.json"
+MANIFEST = ".kctx/manifest.json"
+LEGACY_MANIFEST = ".kaggle-context/manifest.json"  # workspaces made before the rename to kctx
 
 
 def write(path: Path, text: str) -> None:
@@ -97,11 +98,14 @@ def export_workspace(
             indent=2,
         ),
     )
+    shutil.rmtree(root / Path(LEGACY_MANIFEST).parent, ignore_errors=True)
     return root
 
 
 def read_manifest(folder: Path) -> dict[str, Any] | None:
     path = folder / MANIFEST
+    if not path.exists():
+        path = folder / LEGACY_MANIFEST
     if not path.exists():
         return None
     try:

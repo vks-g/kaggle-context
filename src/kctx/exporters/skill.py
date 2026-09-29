@@ -12,12 +12,13 @@ import shutil
 import zipfile
 from pathlib import Path
 
-from kaggle_context.core.models import Bundle
-from kaggle_context.exporters.workspace import write, write_reference_tree
-from kaggle_context.render import sections as r
-from kaggle_context.render.facts import render_facts
+from kctx.core.models import Bundle
+from kctx.exporters.workspace import write, write_reference_tree
+from kctx.render import sections as r
+from kctx.render.facts import render_facts
 
-MARKER = ".kaggle-context-skill"
+MARKER = ".kctx-skill"
+LEGACY_MARKERS = (".kaggle-context-skill",)  # skills made before the rename to kctx
 SCOPES = ("user", "project", "zip")
 
 
@@ -68,7 +69,7 @@ def render_skill_md(bundle: Bundle) -> str:
                 f"`{r.download_command(bundle.slug)}` after accepting the rules.",
                 f"- This is a snapshot from {bundle.fetched_at[:10]}. If the competition is still running "
                 f"and freshness matters, run `kctx fetch {bundle.slug} --mode skill --refresh`, or use the "
-                "kaggle-context MCP server's `whats_new` tool.",
+                "kctx MCP server's `get_whats_new` tool.",
             ]
         ),
     ]
@@ -79,10 +80,8 @@ def build_skill(bundle: Bundle, target_dir: Path) -> Path:
     """Write the skill folder at ``target_dir/<skill-name>/`` and return it."""
     root = target_dir / skill_name(bundle.slug)
     if root.exists():
-        if not (root / MARKER).exists():
-            raise FileExistsError(
-                f"{root} exists and was not created by kaggle-context; not overwriting it."
-            )
+        if not any((root / m).exists() for m in (MARKER, *LEGACY_MARKERS)):
+            raise FileExistsError(f"{root} exists and was not created by kctx; not overwriting it.")
         shutil.rmtree(root)
     root.mkdir(parents=True)
     write_reference_tree(bundle, root / "references", copy_sources=False)
@@ -111,7 +110,7 @@ def export_skill(
         zip_path = out_dir / f"{folder.name}.zip"
         with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as zf:
             for path in sorted(folder.rglob("*")):
-                if path.is_file() and path.name != MARKER:
+                if path.is_file() and path.name not in (MARKER, *LEGACY_MARKERS):
                     zf.write(path, path.relative_to(staging))
         shutil.rmtree(staging, ignore_errors=True)
         return zip_path

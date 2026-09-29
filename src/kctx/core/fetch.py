@@ -15,9 +15,9 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
-from kaggle_context import __version__
-from kaggle_context.core.client import KaggleError, KaggleSource, NotFoundError
-from kaggle_context.core.models import (
+from kctx import __version__
+from kctx.core.client import KaggleError, KaggleSource, NotFoundError
+from kctx.core.models import (
     SECTIONS,
     Bundle,
     Comment,
@@ -29,9 +29,9 @@ from kaggle_context.core.models import (
     Topic,
     TopicRef,
 )
-from kaggle_context.core.slug import competition_url
-from kaggle_context.render.html2md import to_markdown
-from kaggle_context.render.notebook import notebook_to_markdown
+from kctx.core.slug import competition_url
+from kctx.render.html2md import to_markdown
+from kctx.render.notebook import notebook_to_markdown
 
 # (section, status, detail); status is one of start | progress | done | error | skip
 Progress = Callable[[str, str, str], None]

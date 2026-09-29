@@ -11,9 +11,9 @@ import pytest
 from conftest import SLUG, FakeClient
 from rich.console import Console
 
-from kaggle_context.core.client import AuthError
-from kaggle_context.exporters import mcp_register
-from kaggle_context.interactive import Cancelled, Choice, QuestionaryPrompter, run_interactive
+from kctx.core.client import AuthError
+from kctx.exporters import mcp_register
+from kctx.interactive import Cancelled, Choice, QuestionaryPrompter, run_interactive
 
 
 class TermClient(FakeClient):
@@ -279,8 +279,8 @@ def test_claude_code_registration_detaches_stdin(fake_claude: Path) -> None:
     res = mcp_register.register_claude_code()
     assert res.ok, res.message
     lines = fake_claude.read_text().splitlines()
-    assert lines[0].startswith("mcp get kaggle-context")
-    assert lines[1].startswith("mcp add --scope user kaggle-context -- ")
+    assert lines[0].startswith("mcp get kctx")
+    assert lines[1].startswith("mcp add --scope user kctx -- ")
     assert all(line.endswith("stdin_is_devnull=True") for line in lines)
 
 
@@ -290,4 +290,4 @@ def test_claude_code_failure_is_one_line_with_a_fix(fake_claude: Path, monkeypat
     assert not res.ok
     assert "\n" not in res.message
     assert "EINVAL: invalid argument, kqueue" in res.message
-    assert "claude mcp add --scope user kaggle-context --" in res.message
+    assert "claude mcp add --scope user kctx --" in res.message

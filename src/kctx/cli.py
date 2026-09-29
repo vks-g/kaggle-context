@@ -12,8 +12,8 @@ from pathlib import Path
 import typer
 from rich.console import Console
 
-from kaggle_context import __version__
-from kaggle_context.core.models import SECTIONS
+from kctx import __version__
+from kctx.core.models import SECTIONS
 
 app = typer.Typer(
     help="Turn any Kaggle competition into Claude-ready context. Run `kctx` with no arguments to be asked step by step.",
@@ -55,12 +55,12 @@ def fetch(
     refresh: bool = typer.Option(False, "--refresh", help="Ignore the cache and fetch again"),
 ) -> None:
     """Fetch a competition and export it (the non-interactive version of `kctx`)."""
-    from kaggle_context.core.cache import get_bundle
-    from kaggle_context.core.client import KaggleClient, KaggleError
-    from kaggle_context.core.fetch import FetchOptions
-    from kaggle_context.core.slug import parse_competition
-    from kaggle_context.pipeline import MODES, ExportPlan, run_exports
-    from kaggle_context.ui import print_result, progress_printer
+    from kctx.core.cache import get_bundle
+    from kctx.core.client import KaggleClient, KaggleError
+    from kctx.core.fetch import FetchOptions
+    from kctx.core.slug import parse_competition
+    from kctx.pipeline import MODES, ExportPlan, run_exports
+    from kctx.ui import print_result, progress_printer
 
     try:
         slug = parse_competition(competition)
@@ -106,19 +106,19 @@ def refresh(
     ),
 ) -> None:
     """Re-fetch a competition and rewrite the workspace/skill it was exported to."""
-    from kaggle_context.core.cache import get_bundle
-    from kaggle_context.core.client import KaggleClient, KaggleError
-    from kaggle_context.core.slug import parse_competition
-    from kaggle_context.exporters.workspace import read_manifest
-    from kaggle_context.pipeline import ExportPlan, run_exports
-    from kaggle_context.ui import print_result, progress_printer
+    from kctx.core.cache import get_bundle
+    from kctx.core.client import KaggleClient, KaggleError
+    from kctx.core.slug import parse_competition
+    from kctx.exporters.workspace import read_manifest
+    from kctx.pipeline import ExportPlan, run_exports
+    from kctx.ui import print_result, progress_printer
 
     folder = Path(target).expanduser()
     manifest = read_manifest(folder) if folder.is_dir() else None
     try:
         slug = manifest["slug"] if manifest else parse_competition(target)
     except ValueError:
-        _fail(f"{target!r} is neither a kaggle-context workspace nor a competition slug.")
+        _fail(f"{target!r} is neither a kctx workspace nor a competition slug.")
     try:
         bundle = get_bundle(KaggleClient(), slug, refresh=True, progress=progress_printer(err))
     except KaggleError as exc:
@@ -147,7 +147,7 @@ def search(
     """Search Kaggle competitions."""
     from rich.table import Table
 
-    from kaggle_context.core.client import KaggleClient, KaggleError, _slug_of
+    from kctx.core.client import KaggleClient, KaggleError, _slug_of
 
     try:
         comps = KaggleClient().search_competitions(query)
@@ -170,7 +170,7 @@ def mcp(
     competition: str | None = typer.Option(None, "--competition", "-c", help="Default competition"),
 ) -> None:
     """Run the MCP server over stdio (Claude starts this for you)."""
-    from kaggle_context.mcp_server import run
+    from kctx.mcp_server import run
 
     run(competition)
 
@@ -180,7 +180,7 @@ def login(
     token: str | None = typer.Option(None, help="Paste an API token instead of the browser flow"),
 ) -> None:
     """Connect your Kaggle account (browser OAuth, or an API token)."""
-    from kaggle_context.core.client import KaggleClient, save_access_token
+    from kctx.core.client import KaggleClient, save_access_token
 
     if token:
         path = save_access_token(token)
@@ -202,7 +202,7 @@ COMMANDS = {"fetch", "refresh", "search", "mcp", "login", "version"}
 def main() -> None:
     args = sys.argv[1:]
     if not args or (args[0] not in COMMANDS and not args[0].startswith("-")):
-        from kaggle_context.interactive import main as interactive
+        from kctx.interactive import main as interactive
 
         sys.exit(interactive(args[0] if args else None))
     app()

@@ -9,7 +9,7 @@ from __future__ import annotations
 import re
 from datetime import UTC, datetime
 
-from kaggle_context.core.models import Bundle
+from kctx.core.models import Bundle
 
 _HEADING = re.compile(r"^(#{1,6})\s+(.*?)\s*#*\s*$")
 _BOLD_HEADING = re.compile(r"^\s*\*\*(.+?)\*\*\s*:?\s*$")

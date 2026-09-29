@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-from kaggle_context.core.budget import estimate_tokens
-from kaggle_context.core.models import Bundle
-from kaggle_context.render import sections as r
-from kaggle_context.render.facts import (
+from kctx.core.budget import estimate_tokens
+from kctx.core.models import Bundle
+from kctx.render import sections as r
+from kctx.render.facts import (
     external_data_rule,
     key_facts,
     notebook_limits,

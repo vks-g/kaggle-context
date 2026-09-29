@@ -1,5 +1,5 @@
 [project]
-name = "kaggle-context"
+name = "kctx"
 version = "0.1.0"
 description = "Turn any Kaggle competition into Claude-ready context: a workspace folder, a Claude skill, or a local MCP server."
 readme = "README.md"
@@ -26,12 +26,11 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/vks-g/kaggle-context"
-Issues = "https://github.com/vks-g/kaggle-context/issues"
+Homepage = "https://github.com/vks-g/kctx"
+Issues = "https://github.com/vks-g/kctx/issues"
 
 [project.scripts]
-kctx = "kaggle_context.cli:main"
-kaggle-context = "kaggle_context.cli:main"
+kctx = "kctx.cli:main"
 
 [dependency-groups]
 dev = [
@@ -46,7 +45,7 @@ requires = ["hatchling>=1.27"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/kaggle_context"]
+packages = ["src/kctx"]
 
 [tool.ruff]
 line-length = 100
