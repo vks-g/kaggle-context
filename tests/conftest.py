@@ -13,7 +13,7 @@ from typing import Any
 
 import pytest
 
-from kaggle_context.core.client import ForbiddenError, NotFoundError
+from kctx.core.client import ForbiddenError, NotFoundError
 
 SLUG = "demo-comp"
 
@@ -275,7 +275,7 @@ class FakeClient:
 @pytest.fixture
 def cache(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
     root = tmp_path / "cache"
-    monkeypatch.setenv("KAGGLE_CONTEXT_CACHE", str(root))
+    monkeypatch.setenv("KCTX_CACHE", str(root))
     return root
 
 
@@ -286,7 +286,7 @@ def client() -> FakeClient:
 
 @pytest.fixture
 def bundle(cache: Path, client: FakeClient):
-    from kaggle_context.core.cache import get_bundle
+    from kctx.core.cache import get_bundle
 
     return get_bundle(client, SLUG)
 

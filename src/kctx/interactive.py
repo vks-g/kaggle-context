@@ -18,20 +18,20 @@ from typing import Any, Protocol
 from rich.console import Console
 from rich.markup import escape
 
-from kaggle_context import __version__
-from kaggle_context.core.cache import get_bundle
-from kaggle_context.core.client import (
+from kctx import __version__
+from kctx.core.cache import get_bundle
+from kctx.core.client import (
     AuthError,
     KaggleClient,
     KaggleError,
     credentials_present,
     save_access_token,
 )
-from kaggle_context.core.fetch import FetchOptions, meta_from_api
-from kaggle_context.core.models import CompetitionMeta
-from kaggle_context.core.slug import competition_url, parse_competition
-from kaggle_context.pipeline import ExportPlan, ExportResult, run_exports
-from kaggle_context.ui import competition_card, print_result, progress_printer
+from kctx.core.fetch import FetchOptions, meta_from_api
+from kctx.core.models import CompetitionMeta
+from kctx.core.slug import competition_url, parse_competition
+from kctx.pipeline import ExportPlan, ExportResult, run_exports
+from kctx.ui import competition_card, print_result, progress_printer
 
 
 class Cancelled(Exception):
@@ -95,7 +95,7 @@ class QuestionaryPrompter:
     def checkbox(self, message: str, choices: list[Choice]) -> list[Any]:
         # Our own prompt: questionary's checkbox submits on Enter, so people who press
         # Enter on each option end up with only one of them.
-        from kaggle_context.multiselect import multiselect
+        from kctx.multiselect import multiselect
 
         try:
             return multiselect(
@@ -360,9 +360,7 @@ def run_interactive(
 ) -> ExportResult | None:
     console = console or Console(soft_wrap=True)
     prompter = prompter or QuestionaryPrompter()
-    console.print(
-        f"[bold]kaggle-context[/] {__version__} [dim]· Kaggle competition → Claude context[/]\n"
-    )
+    console.print(f"[bold]kctx[/] {__version__} [dim]· Kaggle competition → Claude context[/]\n")
     try:
         session = Session(prompter, console, **session_kwargs)
         session.login()

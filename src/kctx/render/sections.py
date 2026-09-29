@@ -4,12 +4,12 @@ from __future__ import annotations
 
 import re
 
-from kaggle_context import __version__
-from kaggle_context.core.budget import allocate, estimate_tokens, truncate
-from kaggle_context.core.models import Bundle, Comment, Notebook, Page, Topic, TopicRef
-from kaggle_context.core.slug import competition_url
-from kaggle_context.render.facts import format_date, render_facts
-from kaggle_context.render.html2md import nest_headings
+from kctx import __version__
+from kctx.core.budget import allocate, estimate_tokens, truncate
+from kctx.core.models import Bundle, Comment, Notebook, Page, Topic, TopicRef
+from kctx.core.slug import competition_url
+from kctx.render.facts import format_date, render_facts
+from kctx.render.html2md import nest_headings
 
 CONTEXT_SHARES = {
     "overview": 0.15,
@@ -57,7 +57,7 @@ def human_size(n: int) -> str:
 def header(bundle: Bundle) -> str:
     return (
         f"> Snapshot of [{bundle.meta.title}]({bundle.meta.url}) taken {format_date(bundle.fetched_at, relative=False)} "
-        f"by kaggle-context {bundle.tool_version or __version__}."
+        f"by kctx {bundle.tool_version or __version__}."
     )
 
 

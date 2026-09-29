@@ -8,11 +8,11 @@ from pathlib import Path
 import pytest
 from conftest import SLUG
 
-from kaggle_context.core.models import Bundle
-from kaggle_context.exporters import mcp_register
-from kaggle_context.exporters.skill import MARKER, export_skill, skill_name
-from kaggle_context.exporters.workspace import export_workspace, read_manifest
-from kaggle_context.pipeline import ExportPlan, run_exports
+from kctx.core.models import Bundle
+from kctx.exporters import mcp_register
+from kctx.exporters.skill import MARKER, export_skill, skill_name
+from kctx.exporters.workspace import export_workspace, read_manifest
+from kctx.pipeline import ExportPlan, run_exports
 
 
 def test_workspace_tree(bundle: Bundle, tmp_path: Path) -> None:
@@ -91,7 +91,7 @@ def test_desktop_config_merge_preserves_other_servers(tmp_path: Path) -> None:
     assert res.ok
     data = json.loads(cfg.read_text())
     assert data["theme"] == "dark" and "other" in data["mcpServers"]
-    assert data["mcpServers"]["kaggle-context"]["args"][-1] == "mcp"
+    assert data["mcpServers"]["kctx"]["args"][-1] == "mcp"
     assert list(tmp_path.glob("claude_desktop_config.json.bak-*"))
 
 
@@ -105,7 +105,7 @@ def test_desktop_config_invalid_json_is_left_alone(tmp_path: Path) -> None:
 def test_project_mcp_json_pins_competition(tmp_path: Path) -> None:
     res = mcp_register.register_project(tmp_path, SLUG)
     assert res.ok
-    entry = json.loads((tmp_path / ".mcp.json").read_text())["mcpServers"]["kaggle-context"]
+    entry = json.loads((tmp_path / ".mcp.json").read_text())["mcpServers"]["kctx"]
     assert entry["args"][-3:] == ["mcp", "--competition", SLUG]
 
 
@@ -122,3 +122,21 @@ def test_run_exports_all_modes(bundle: Bundle, tmp_path: Path, monkeypatch) -> N
     assert (tmp_path / "claude-home/skills" / skill_name(SLUG) / "SKILL.md").is_file()
     assert (tmp_path / SLUG / ".mcp.json").is_file()
     assert any("mcpServers" in line for line in res.done)
+
+
+def test_skill_made_before_the_rename_is_updated(bundle: Bundle, tmp_path: Path) -> None:
+    old = tmp_path / ".claude/skills" / skill_name(SLUG)
+    old.mkdir(parents=True)
+    (old / ".kaggle-context-skill").write_text("2026-01-01\n")
+    root = export_skill(bundle, "project", project_dir=tmp_path)
+    assert (root / MARKER).exists() and (root / "SKILL.md").is_file()
+
+
+def test_workspace_made_before_the_rename_is_recognised(bundle: Bundle, tmp_path: Path) -> None:
+    legacy = tmp_path / SLUG / ".kaggle-context"
+    legacy.mkdir(parents=True)
+    (legacy / "manifest.json").write_text(json.dumps({"slug": SLUG}))
+    assert read_manifest(tmp_path / SLUG)["slug"] == SLUG
+    export_workspace(bundle, tmp_path)
+    assert not legacy.exists()
+    assert read_manifest(tmp_path / SLUG)["slug"] == SLUG
