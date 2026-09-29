@@ -1,4 +1,4 @@
-"""Run the selected export modes for a fetched bundle. Shared by the CLI and the TUI."""
+"""Run the selected export modes for a fetched bundle. Shared by the prompts and the headless CLI."""
 
 from __future__ import annotations
 

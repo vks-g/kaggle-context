@@ -7,7 +7,7 @@ license = "MIT"
 license-files = ["LICENSE"]
 authors = [{ name = "vks-g" }]
 requires-python = ">=3.11"
-keywords = ["kaggle", "claude", "llm", "mcp", "context", "tui", "agents"]
+keywords = ["kaggle", "claude", "llm", "mcp", "context", "cli", "agents"]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Environment :: Console",
@@ -21,7 +21,7 @@ dependencies = [
     "kaggle>=2.2.4",
     "markdownify>=1.2",
     "mcp>=2.2",
-    "textual>=8.2",
+    "questionary>=2.1",
     "typer>=0.27",
 ]
 
@@ -53,8 +53,8 @@ target-version = "py311"
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "B", "UP", "SIM", "RUF"]
-# E501: the formatter wraps code; long strings stay readable. B008: typer idiom. RUF012: Textual BINDINGS.
-ignore = ["E501", "B008", "RUF012", "RUF001", "RUF002", "RUF003"]
+# E501: the formatter wraps code; long strings stay readable. B008: typer idiom.
+ignore = ["E501", "B008", "RUF001", "RUF002", "RUF003"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -55,24 +56,47 @@ def config_snippet(competition: str | None = None) -> str:
     return json.dumps({"mcpServers": {SERVER_NAME: server_entry(competition)}}, indent=2)
 
 
+def claude_code_add_command() -> str:
+    entry = server_entry()
+    return " ".join(
+        ["claude mcp add --scope user", SERVER_NAME, "--", entry["command"], *entry["args"]]
+    )  # type: ignore[list-item]
+
+
+def _run_claude(claude: str, *args: str) -> subprocess.CompletedProcess[str]:
+    # stdin must not be the terminal: the claude CLI (Bun) crashes with
+    # "EINVAL: invalid argument, kqueue" when it inherits a /dev/tty stdin on macOS.
+    return subprocess.run(
+        [claude, *args],
+        stdin=subprocess.DEVNULL,
+        capture_output=True,
+        text=True,
+        timeout=60,
+        check=False,
+    )
+
+
+def _one_line(text: str) -> str:
+    lines = [line.strip() for line in text.splitlines() if line.strip()]
+    errors = [line for line in lines if re.match(r"(\w*error|fatal)\b", line, re.IGNORECASE)]
+    return ((errors or lines or ["unknown error"])[-1])[:200]
+
+
 def register_claude_code() -> Result:
     claude = shutil.which("claude")
     if not claude:
-        entry = server_entry()
-        cmd = " ".join([entry["command"], *entry["args"]])  # type: ignore[list-item]
         return Result(
             "claude-code",
             False,
-            f"`claude` CLI not found. Once it is installed, run: claude mcp add --scope user {SERVER_NAME} -- {cmd}",
+            f"`claude` CLI not found. Once it is installed, run: {claude_code_add_command()}",
         )
-    existing = subprocess.run(
-        [claude, "mcp", "get", SERVER_NAME], capture_output=True, text=True, check=False
-    )
-    if existing.returncode == 0:
-        return Result("claude-code", True, f"Already registered in Claude Code as '{SERVER_NAME}'.")
-    entry = server_entry()
-    proc = subprocess.run(
-        [
+    try:
+        if _run_claude(claude, "mcp", "get", SERVER_NAME).returncode == 0:
+            return Result(
+                "claude-code", True, f"Already registered in Claude Code as '{SERVER_NAME}'."
+            )
+        entry = server_entry()
+        proc = _run_claude(
             claude,
             "mcp",
             "add",
@@ -81,15 +105,22 @@ def register_claude_code() -> Result:
             SERVER_NAME,
             "--",
             entry["command"],
-            *entry["args"],
-        ],  # type: ignore[list-item]
-        capture_output=True,
-        text=True,
-        check=False,
-    )
+            *entry["args"],  # type: ignore[arg-type]
+        )
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        proc = subprocess.CompletedProcess([], 1, "", str(exc))
     if proc.returncode != 0:
-        return Result("claude-code", False, (proc.stderr or proc.stdout).strip())
-    return Result("claude-code", True, f"Registered '{SERVER_NAME}' in Claude Code (user scope).")
+        reason = _one_line(proc.stderr or proc.stdout)
+        return Result(
+            "claude-code",
+            False,
+            f"couldn't register ({reason}). Run it yourself: {claude_code_add_command()}",
+        )
+    return Result(
+        "claude-code",
+        True,
+        f"Registered '{SERVER_NAME}' in Claude Code (user scope). Check with /mcp in Claude Code.",
+    )
 
 
 def claude_desktop_config_path() -> Path:
