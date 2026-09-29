@@ -9,17 +9,31 @@
 curl -fsSL https://raw.githubusercontent.com/vks-g/kaggle-context/main/install.sh | sh
 ```
 
-That command installs `kctx` and opens a terminal UI:
+That command installs `kctx` and asks you a few questions right in your terminal (arrow keys to move, space to select, enter to confirm):
 
-1. **Account.** It connects to your Kaggle account (browser login, or paste an API token).
-2. **Competition.** You paste a competition URL, e.g. `https://www.kaggle.com/competitions/titanic`.
-3. **Delivery.** You choose how Claude should get the context. Pick any combination:
-   - **Workspace folder**: `CLAUDE.md` + overview / rules / data / discussions / code, ready for `claude`
-   - **Claude skill**: loads automatically whenever you work on that competition
-   - **MCP server**: Claude calls tools for rules, discussions, notebooks and *what's new*
-4. **Done.** It fetches everything and tells you the next command to run.
+```
+✓ Kaggle: signed in as you
+? Competition URL: https://www.kaggle.com/competitions/titanic
+  Titanic - Machine Learning from Disaster
+  Metric: Categorization Accuracy  ·  Deadline: 2030-01-01 00:00 UTC  ·  Teams: 10,307
+? How should Claude get the context? (↑/↓ move, space select, enter confirm)
+ » ● Workspace folder: CLAUDE.md + overview, rules, data, discussions, code
+   ○ Claude skill: loads automatically when you work on this competition
+   ○ MCP server: Claude calls tools for rules, discussions, notebooks, what's new
+? Create the workspace folder in: /Users/you/kaggle
+Fetching Titanic - Machine Learning from Disaster
+  ✓ overview     5 pages
+  ✓ rules        found
+  ✓ data files   3 files
+  ✓ discussions  16 topics (1 solution write-ups)
+  ✓ notebooks    5 notebooks
+  ✓ leaderboard  top 20
+✓ Workspace folder: /Users/you/kaggle/titanic
+```
 
-Skip the prompt by passing the URL: `curl … | sh -s -- https://www.kaggle.com/competitions/titanic`. After the first run, just type `kctx`.
+If you have no Kaggle credentials yet, it first offers a browser login or lets you paste an API token.
+
+Skip the URL question by passing it: `curl … | sh -s -- https://www.kaggle.com/competitions/titanic`. After the first run, just type `kctx`.
 
 ## Which mode should I pick?
 
@@ -52,7 +66,7 @@ titanic/
 
 ### 2 · Claude skill
 
-The TUI generates a per-competition skill, `kaggle-<slug>`, laid out for progressive disclosure:
+`kctx` generates a per-competition skill, `kaggle-<slug>`, laid out for progressive disclosure:
 
 ```
 kaggle-titanic/
@@ -65,6 +79,8 @@ Only the name and description sit in context until the skill is relevant, so doz
 - `~/.claude/skills/`: every project (default)
 - `<project>/.claude/skills/`: one project, can be committed and shared with teammates
 - **zip**: upload at claude.ai → Settings → Capabilities → Skills, to use it in the web app or Desktop
+
+To use it in Claude Code, type `/kaggle` and pick `/kaggle-<slug>`, or just ask about the competition ("are external models allowed?") and Claude loads it on its own.
 
 ### 3 · MCP server: no infrastructure needed
 
@@ -79,7 +95,7 @@ Only the name and description sit in context until the skill is relevant, so doz
 | `get_whats_new` | **Live**: topics created or commented on since the last fetch |
 | `fetch_competition` / `list_competitions` | Add another competition; see what's cached |
 
-It also exposes a `kaggle://{competition}/{section}` resource and a `start-competition` prompt. The TUI registers the server for you. To do it by hand:
+It also exposes a `kaggle://{competition}/{section}` resource and a `start-competition` prompt. `kctx` registers the server for you (Claude Code, Claude Desktop, or a project `.mcp.json`; check it with `/mcp` in Claude Code). To do it by hand:
 
 ```bash
 claude mcp add --scope user kaggle-context -- kctx mcp
@@ -104,7 +120,7 @@ To get the generic `kaggle-context` skill and the MCP server in one step:
 
 ## Headless CLI
 
-Everything the TUI does is also a command, for scripts, CI and agents:
+Everything the prompts do is also a command, for scripts, CI and agents:
 
 ```bash
 kctx fetch <url|slug> --mode folder,skill,mcp [--out DIR] [--skill-scope user|project|zip]
@@ -136,7 +152,7 @@ git clone https://github.com/vks-g/kaggle-context && cd kaggle-context
 uv sync
 uv run pytest            # offline: synthetic fixtures, no Kaggle calls
 uv run ruff check src tests && uv run ruff format --check src tests
-uv run kctx              # the TUI, from your checkout
+uv run kctx              # the step-by-step prompts, from your checkout
 ```
 
 See [CONTRIBUTING.md](CONTRIBUTING.md).
@@ -144,12 +160,12 @@ See [CONTRIBUTING.md](CONTRIBUTING.md).
 ## Roadmap
 
 - [x] Engine + headless CLI
-- [x] TUI launched by `curl … | sh`
+- [x] Step-by-step terminal prompts launched by `curl … | sh`
 - [x] Workspace folder, Claude skill, local MCP server
 - [x] Claude Code plugin
 - [ ] PyPI release (`uvx kaggle-context`)
 - [ ] Website with docs and a short install URL
-- [ ] Windows installer (`install.ps1`), a competition browser in the TUI, an optional hosted MCP
+- [ ] Windows installer (`install.ps1`), competition search inside the prompts, an optional hosted MCP
 
 ## License
 
