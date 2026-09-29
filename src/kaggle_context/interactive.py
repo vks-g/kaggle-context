@@ -43,6 +43,7 @@ class Choice:
     label: str
     value: Any
     checked: bool = False
+    hint: str = ""
 
 
 Validator = Callable[[str], str | None]  # returns an error message, or None when valid
@@ -92,18 +93,19 @@ class QuestionaryPrompter:
         )
 
     def checkbox(self, message: str, choices: list[Choice]) -> list[Any]:
-        import questionary
+        # Our own prompt: questionary's checkbox submits on Enter, so people who press
+        # Enter on each option end up with only one of them.
+        from kaggle_context.multiselect import multiselect
 
-        options = [questionary.Choice(c.label, c.value, checked=c.checked) for c in choices]
-        return self._ask(
-            questionary.checkbox(
+        try:
+            return multiselect(
                 message,
-                choices=options,
-                instruction="(↑/↓ move, space select, enter confirm)",
-                validate=lambda picked: True if picked else "Pick at least one (space to select)",
+                [(c.label, c.value, c.hint) for c in choices],
+                [c.checked for c in choices],
                 **self.kwargs,
             )
-        )
+        except (KeyboardInterrupt, EOFError) as exc:
+            raise Cancelled from exc
 
     def confirm(self, message: str, default: bool = False) -> bool:
         import questionary
@@ -262,26 +264,27 @@ class Session:
     # 3. delivery
     def delivery(self) -> tuple[ExportPlan, FetchOptions, bool]:
         cwd = str(self.cwd)
+        # Nothing is pre-ticked: Enter ticks, so a pre-ticked option would get unticked.
         modes = self.ask.checkbox(
             "How should Claude get the context?",
             [
                 Choice(
-                    "Workspace folder: CLAUDE.md + overview, rules, data, discussions, code",
+                    "Workspace folder",
                     "folder",
-                    True,
+                    hint="CLAUDE.md + overview, rules, data, discussions, code",
                 ),
                 Choice(
-                    "Claude skill: loads automatically when you work on this competition", "skill"
+                    "Claude skill",
+                    "skill",
+                    hint="loads automatically when you work on this competition",
                 ),
                 Choice(
-                    "MCP server: Claude calls tools for rules, discussions, notebooks, what's new",
+                    "MCP server",
                     "mcp",
+                    hint="Claude calls tools for rules, discussions, notebooks, what's new",
                 ),
             ],
         )
-        names = {"folder": "Workspace folder", "skill": "Claude skill", "mcp": "MCP server"}
-        if len(modes) > 1:  # questionary only says "done (N selections)"
-            self.console.print(f"  [dim]→ {', '.join(names[m] for m in modes)}[/]")
         plan = ExportPlan(modes=tuple(modes), out_dir=self.cwd)
         if "folder" in modes:
             out = self.ask.text("Create the workspace folder in:", default=cwd)
@@ -301,18 +304,19 @@ class Session:
         if "mcp" in modes:
             has_claude = shutil.which("claude") is not None
             targets = [
-                Choice("Claude Code", "claude-code", has_claude),
+                Choice(
+                    "Claude Code",
+                    "claude-code",
+                    hint="recommended" if has_claude else "claude CLI not found",
+                ),
                 Choice("Claude Desktop", "claude-desktop"),
             ]
             if "folder" in modes:
                 targets.append(
-                    Choice(".mcp.json in the workspace folder (that project only)", "project")
+                    Choice(".mcp.json in the workspace folder", "project", hint="that project only")
                 )
-            targets.append(Choice("Just print the config", "print", not has_claude))
+            targets.append(Choice("Just print the config", "print"))
             plan.mcp_targets = tuple(self.ask.checkbox("Register the MCP server with:", targets))
-            if len(plan.mcp_targets) > 1:
-                labels = {c.value: c.label for c in targets}
-                self.console.print(f"  [dim]→ {', '.join(labels[t] for t in plan.mcp_targets)}[/]")
 
         options = FetchOptions()
         refresh = False

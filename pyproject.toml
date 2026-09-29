@@ -37,6 +37,7 @@ kaggle-context = "kaggle_context.cli:main"
 dev = [
     "pytest>=9.1",
     "pytest-asyncio>=1.4",
+    "pytest-timeout>=2.3",
     "ruff>=0.16",
 ]
 
@@ -60,3 +61,4 @@ ignore = ["E501", "B008", "RUF001", "RUF002", "RUF003"]
 testpaths = ["tests"]
 pythonpath = ["tests"]
 asyncio_mode = "auto"
+timeout = 60  # interactive tests must never hang CI
