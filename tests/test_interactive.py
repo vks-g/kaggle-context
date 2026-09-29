@@ -101,9 +101,8 @@ def test_full_flow_folder_and_skill(cache, tmp_path: Path, monkeypatch) -> None:
     assert (tmp_path / "claude-home/skills" / f"kaggle-{SLUG}" / "SKILL.md").is_file()
     kinds = [k for k, _, _ in prompter.asked]
     assert kinds == ["text", "checkbox", "text", "select", "confirm"]
-    # folder is pre-selected
-    modes = prompter.asked[1][2]
-    assert ("folder", True) in modes and ("skill", False) in modes
+    # nothing is pre-ticked (Enter ticks, so a pre-ticked option would be unticked)
+    assert prompter.asked[1][2] == [("folder", False), ("skill", False), ("mcp", False)]
 
 
 def test_url_argument_skips_the_url_question(cache, tmp_path: Path) -> None:
@@ -129,7 +128,7 @@ def test_mcp_targets_offer_project_only_with_folder(cache, tmp_path: Path, monke
     assert result is not None and not result.failed
     targets = dict(prompter.asked[1][2])
     assert "project" not in targets
-    assert targets == {"claude-code": False, "claude-desktop": False, "print": True}
+    assert targets == {"claude-code": False, "claude-desktop": False, "print": False}
     assert '"mcpServers"' in out
 
 
@@ -199,14 +198,38 @@ def test_questionary_text_and_validation(pipe) -> None:
     assert answer == "titanic"
 
 
-def test_questionary_checkbox_arrows_and_space(pipe) -> None:
+DOWN = "\x1b[B"
+ABC = [Choice("a", "a"), Choice("b", "b"), Choice("c", "c")]
+
+
+@pytest.mark.parametrize(
+    ("keys", "expected"),
+    [
+        ("\r" + DOWN + DOWN + "\r" + DOWN + "\r", ["a", "c"]),  # enter ticks, Continue submits
+        (" " + DOWN + " " + DOWN + " " + DOWN + "\r", ["a", "b", "c"]),  # space ticks too
+        ("2" + DOWN + DOWN + "\r", ["b"]),  # number keys tick option N
+        ("\r\r" + DOWN + "\r" + DOWN + DOWN + "\r", ["b"]),  # enter again unticks
+        ("\x1b[A\r" + "\r" + "\x1b[A\r" + DOWN + "\r", ["c"]),  # up wraps; empty submit is refused
+    ],
+)
+def test_multiselect_keys(pipe, keys: str, expected: list[str]) -> None:
     inp, prompter = pipe
-    # first item is pre-checked; move down twice, select the third, confirm
-    inp.send_text("\x1b[B\x1b[B \r")
-    picked = prompter.checkbox(
-        "Modes:", [Choice("a", "a", True), Choice("b", "b"), Choice("c", "c")]
-    )
-    assert picked == ["a", "c"]
+    inp.send_text(keys)
+    assert prompter.checkbox("Modes:", ABC) == expected
+
+
+def test_multiselect_keeps_pre_ticked_options(pipe) -> None:
+    inp, prompter = pipe
+    inp.send_text("\x1b[A\r")  # straight to Continue
+    choices = [Choice("a", "a", True), Choice("b", "b")]
+    assert prompter.checkbox("Modes:", choices) == ["a"]
+
+
+def test_multiselect_ctrl_c_is_cancelled(pipe) -> None:
+    inp, prompter = pipe
+    inp.send_text("\x03")
+    with pytest.raises(Cancelled):
+        prompter.checkbox("Modes:", ABC)
 
 
 def test_questionary_select(pipe) -> None:

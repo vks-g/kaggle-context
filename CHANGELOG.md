@@ -8,5 +8,6 @@
 - Per-competition Claude skill export (user, project, or zip for claude.ai).
 - Local stdio MCP server with tools, a resource template and a prompt; registration for Claude Code, Claude Desktop and project `.mcp.json`.
 - Step-by-step terminal prompts (arrow keys, space to select) behind plain `kctx`, and a `curl | sh` installer.
+- Multi-choice questions: enter or space ticks an option, number keys tick option N, and a final "Continue" row submits. Nothing is pre-ticked. (With the previous checkbox, pressing enter submitted after the first choice.)
 - Fix: registering the MCP server with Claude Code no longer crashes the `claude` CLI (`EINVAL … kqueue`) when started through `curl | sh` on macOS; failures now show one line plus the command to run yourself.
 - Claude Code plugin with a generic `kaggle-context` skill.

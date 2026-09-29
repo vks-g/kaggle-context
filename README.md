@@ -9,17 +9,18 @@
 curl -fsSL https://raw.githubusercontent.com/vks-g/kaggle-context/main/install.sh | sh
 ```
 
-That command installs `kctx` and asks you a few questions right in your terminal (arrow keys to move, space to select, enter to confirm):
+That command installs `kctx` and asks you a few questions right in your terminal. Move with the arrow keys; in multi-choice questions, **enter (or space) ticks an option** and you finish by picking **Continue**:
 
 ```
 ✓ Kaggle: signed in as you
 ? Competition URL: https://www.kaggle.com/competitions/titanic
   Titanic - Machine Learning from Disaster
   Metric: Categorization Accuracy  ·  Deadline: 2030-01-01 00:00 UTC  ·  Teams: 10,307
-? How should Claude get the context? (↑/↓ move, space select, enter confirm)
- » ● Workspace folder: CLAUDE.md + overview, rules, data, discussions, code
-   ○ Claude skill: loads automatically when you work on this competition
-   ○ MCP server: Claude calls tools for rules, discussions, notebooks, what's new
+? How should Claude get the context? (↑/↓ move · enter or space to tick · then pick Continue)
+   [x] Workspace folder  CLAUDE.md + overview, rules, data, discussions, code
+   [x] Claude skill  loads automatically when you work on this competition
+   [ ] MCP server  Claude calls tools for rules, discussions, notebooks, what's new
+ ❯ Continue →
 ? Create the workspace folder in: /Users/you/kaggle
 Fetching Titanic - Machine Learning from Disaster
   ✓ overview     5 pages
