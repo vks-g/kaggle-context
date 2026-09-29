@@ -53,8 +53,8 @@ target-version = "py311"
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "B", "UP", "SIM", "RUF"]
-# E501: the formatter wraps code; long strings stay readable. B008: typer idiom.
-ignore = ["E501", "B008", "RUF001", "RUF002", "RUF003"]
+# E501: the formatter wraps code; long strings stay readable. B008: typer idiom. RUF012: Textual BINDINGS.
+ignore = ["E501", "B008", "RUF012", "RUF001", "RUF002", "RUF003"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

@@ -47,10 +47,12 @@ def run_exports(bundle: Bundle, plan: ExportPlan) -> ExportResult:
         try:
             res.workspace = export_workspace(bundle, plan.out_dir, plan.budget, plan.settings())
             res.done.append(f"Workspace folder: {res.workspace}")
-            res.next_steps.append(f"cd {res.workspace} && claude   # CLAUDE.md loads the context")
             res.next_steps.append(
-                f"Accept the rules at https://www.kaggle.com/competitions/{slug}/rules, "
-                "then run: bash data/download.sh"
+                f"Open it in Claude Code: `cd {res.workspace} && claude` (CLAUDE.md loads the context)"
+            )
+            res.next_steps.append(
+                f"Get the data: accept the rules at https://www.kaggle.com/competitions/{slug}/rules, "
+                "then run `bash data/download.sh` in that folder"
             )
         except OSError as exc:
             res.failed.append(f"Workspace folder: {exc}")
@@ -61,12 +63,12 @@ def run_exports(bundle: Bundle, plan: ExportPlan) -> ExportResult:
             res.done.append(f"Claude skill ({plan.skill_scope}): {path}")
             if plan.skill_scope == "zip":
                 res.next_steps.append(
-                    f"Upload {path.name} at claude.ai → Settings → Capabilities → Skills"
+                    f"Upload `{path.name}` at claude.ai → Settings → Capabilities → Skills"
                 )
             else:
                 res.next_steps.append(
-                    f"In Claude Code, the skill loads automatically when relevant, "
-                    f"or call it with /{skill_name(slug)}"
+                    "The skill loads automatically in Claude Code when relevant, "
+                    f"or run `/{skill_name(slug)}`"
                 )
         except (OSError, ValueError) as exc:
             res.failed.append(f"Claude skill: {exc}")

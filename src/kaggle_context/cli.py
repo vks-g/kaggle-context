@@ -1,10 +1,12 @@
 """Command-line entry point.
 
-Headless commands for scripts, CI, skills and agents.
+``kctx`` with no arguments (or with just a competition URL) opens the TUI.
+Subcommands do the same work headlessly, for scripts, CI, skills and agents.
 """
 
 from __future__ import annotations
 
+import sys
 from pathlib import Path
 
 import typer
@@ -14,7 +16,7 @@ from kaggle_context import __version__
 from kaggle_context.core.models import SECTIONS
 
 app = typer.Typer(
-    help="Turn any Kaggle competition into Claude-ready context.",
+    help="Turn any Kaggle competition into Claude-ready context. Run `kctx` with no arguments for the TUI.",
     add_completion=False,
     no_args_is_help=False,
 )
@@ -211,5 +213,14 @@ def version() -> None:
     typer.echo(__version__)
 
 
+COMMANDS = {"fetch", "refresh", "search", "mcp", "login", "version"}
+
+
 def main() -> None:
+    args = sys.argv[1:]
+    if not args or (args[0] not in COMMANDS and not args[0].startswith("-")):
+        from kaggle_context.tui.app import run_tui
+
+        run_tui(args[0] if args else None)
+        return
     app()

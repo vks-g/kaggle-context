@@ -1,0 +1,58 @@
+#!/bin/sh
+# kaggle-context installer: installs the `kctx` command with uv, then opens the TUI.
+#
+#   curl -fsSL https://raw.githubusercontent.com/vks-g/kaggle-context/main/install.sh | sh
+#   curl -fsSL https://raw.githubusercontent.com/vks-g/kaggle-context/main/install.sh | sh -s -- <competition-url>
+#
+# Environment:
+#   KCTX_SPEC    what to install (default: the GitHub repo; e.g. "kaggle-context" once on PyPI)
+#   KCTX_NO_RUN  set to 1 to install without opening the TUI
+set -eu
+
+SPEC="${KCTX_SPEC:-git+https://github.com/vks-g/kaggle-context}"
+
+say() { printf '%s\n' "$*"; }
+die() {
+  printf 'kaggle-context: %s\n' "$*" >&2
+  exit 1
+}
+
+if ! command -v uv >/dev/null 2>&1; then
+  say "Installing uv (Astral's Python package manager; it also fetches Python if needed)..."
+  if command -v curl >/dev/null 2>&1; then
+    curl -LsSf https://astral.sh/uv/install.sh | sh
+  elif command -v wget >/dev/null 2>&1; then
+    wget -qO- https://astral.sh/uv/install.sh | sh
+  else
+    die "curl or wget is required to install uv"
+  fi
+  if [ -f "$HOME/.local/bin/env" ]; then
+    # shellcheck disable=SC1091
+    . "$HOME/.local/bin/env"
+  fi
+  PATH="$HOME/.local/bin:$HOME/.cargo/bin:$PATH"
+fi
+command -v uv >/dev/null 2>&1 || die "uv was installed but isn't on PATH yet; open a new terminal and re-run"
+
+say "Installing kaggle-context..."
+uv tool install --quiet --force --reinstall "$SPEC"
+
+BIN="$(uv tool dir --bin)"
+KCTX="$BIN/kctx"
+[ -x "$KCTX" ] || die "install finished but $KCTX is missing"
+
+case ":$PATH:" in
+  *":$BIN:"*) ;;
+  *) say "Tip: run 'uv tool update-shell' (or add $BIN to PATH) so 'kctx' works in new terminals." ;;
+esac
+
+if [ "${KCTX_NO_RUN:-0}" = "1" ]; then
+  say "Installed. Run 'kctx' to start."
+  exit 0
+fi
+
+# Under `curl | sh`, stdin is the pipe, not your keyboard: give the TUI the terminal.
+if (: </dev/tty) 2>/dev/null; then
+  exec "$KCTX" "$@" </dev/tty
+fi
+say "Installed. There's no interactive terminal here, so run 'kctx' yourself."
