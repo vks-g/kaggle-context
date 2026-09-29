@@ -1,6 +1,6 @@
 """On-disk cache of fetched bundles: ``<cache>/<slug>/bundle.json`` + ``notebooks/``.
 
-The TUI, the CLI exporters and the MCP server all read from here, so a competition
+The prompts, the CLI exporters and the MCP server all read from here, so a competition
 is fetched from Kaggle once and reused.
 """
 

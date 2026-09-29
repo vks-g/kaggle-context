@@ -1,6 +1,6 @@
 """Local stdio MCP server exposing competition context as tools, resources and a prompt.
 
-Reads from the on-disk cache (filled by the TUI / ``kctx fetch``) and fetches on demand
+Reads from the on-disk cache (filled by ``kctx`` / ``kctx fetch``) and fetches on demand
 for competitions it hasn't seen. Everything runs on the user's machine with their own
 Kaggle credentials, so there is nothing to host.
 """

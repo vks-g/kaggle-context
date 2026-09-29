@@ -1,12 +1,12 @@
 #!/bin/sh
-# kaggle-context installer: installs the `kctx` command with uv, then opens the TUI.
+# kaggle-context installer: installs the `kctx` command with uv, then asks you a few questions.
 #
 #   curl -fsSL https://raw.githubusercontent.com/vks-g/kaggle-context/main/install.sh | sh
 #   curl -fsSL https://raw.githubusercontent.com/vks-g/kaggle-context/main/install.sh | sh -s -- <competition-url>
 #
 # Environment:
 #   KCTX_SPEC    what to install (default: the GitHub repo; e.g. "kaggle-context" once on PyPI)
-#   KCTX_NO_RUN  set to 1 to install without opening the TUI
+#   KCTX_NO_RUN  set to 1 to install without starting kctx
 set -eu
 
 SPEC="${KCTX_SPEC:-git+https://github.com/vks-g/kaggle-context}"
@@ -51,8 +51,15 @@ if [ "${KCTX_NO_RUN:-0}" = "1" ]; then
   exit 0
 fi
 
-# Under `curl | sh`, stdin is the pipe, not your keyboard: give the TUI the terminal.
-if (: </dev/tty) 2>/dev/null; then
-  exec "$KCTX" "$@" </dev/tty
+# Under `curl | sh`, stdin is the pipe, not your keyboard, so reconnect the terminal.
+# Prefer the real device (e.g. /dev/ttys003): macOS can't poll the /dev/tty alias with
+# kqueue, which breaks prompt libraries and CLIs such as `claude`.
+TTY_DEV=$(tty <&2 2>/dev/null) || TTY_DEV=/dev/tty
+case "$TTY_DEV" in
+  /dev/*) ;;
+  *) TTY_DEV=/dev/tty ;;
+esac
+if (: <"$TTY_DEV") 2>/dev/null; then
+  exec "$KCTX" "$@" <"$TTY_DEV"
 fi
 say "Installed. There's no interactive terminal here, so run 'kctx' yourself."
