@@ -1,12 +1,12 @@
-# kaggle-context
+# kctx
 
-[![CI](https://github.com/vks-g/kaggle-context/actions/workflows/ci.yml/badge.svg)](https://github.com/vks-g/kaggle-context/actions/workflows/ci.yml)
+[![CI](https://github.com/vks-g/kctx/actions/workflows/ci.yml/badge.svg)](https://github.com/vks-g/kctx/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 **Give Claude the full context of any Kaggle competition in one command:** the overview, evaluation metric, rules, data description, top discussions (winning solution write-ups first) and top public notebooks.
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/vks-g/kaggle-context/main/install.sh | sh
+curl -fsSL https://raw.githubusercontent.com/vks-g/kctx/main/install.sh | sh
 ```
 
 That command installs `kctx` and asks you a few questions right in your terminal. Move with the arrow keys; in multi-choice questions, **enter (or space) ticks an option** and you finish by picking **Continue**:
@@ -85,7 +85,7 @@ To use it in Claude Code, type `/kaggle` and pick `/kaggle-<slug>`, or just ask 
 
 ### 3 · MCP server: no infrastructure needed
 
-`kctx mcp` is a **local stdio server**. Claude Code or Claude Desktop starts it on your machine when needed. It uses your own `~/.kaggle` credentials and a disk cache (`~/.cache/kaggle-context`). There is **no hosted server, no database and no cost**.
+`kctx mcp` is a **local stdio server**. Claude Code or Claude Desktop starts it on your machine when needed. It uses your own `~/.kaggle` credentials and a disk cache (`~/.cache/kctx`). There is **no hosted server, no database and no cost**.
 
 | Tool | What it returns |
 |---|---|
@@ -99,24 +99,24 @@ To use it in Claude Code, type `/kaggle` and pick `/kaggle-<slug>`, or just ask 
 It also exposes a `kaggle://{competition}/{section}` resource and a `start-competition` prompt. `kctx` registers the server for you (Claude Code, Claude Desktop, or a project `.mcp.json`; check it with `/mcp` in Claude Code). To do it by hand:
 
 ```bash
-claude mcp add --scope user kaggle-context -- kctx mcp
+claude mcp add --scope user kctx -- kctx mcp
 ```
 
 For Claude Desktop, add this to `claude_desktop_config.json`, using the absolute path to `kctx` because Desktop doesn't see your shell `PATH`:
 
 ```json
-{ "mcpServers": { "kaggle-context": { "command": "/Users/you/.local/bin/kctx", "args": ["mcp"] } } }
+{ "mcpServers": { "kctx": { "command": "/Users/you/.local/bin/kctx", "args": ["mcp"] } } }
 ```
 
 A *hosted* MCP (for claude.ai on the web or mobile) would need a server and safe handling of each user's Kaggle token. It's on the roadmap, but you don't need it for Claude Code or Desktop.
 
 ### Claude Code plugin
 
-To get the generic `kaggle-context` skill and the MCP server in one step:
+To get the generic `kctx` skill and the MCP server in one step:
 
 ```
-/plugin marketplace add vks-g/kaggle-context
-/plugin install kaggle-context@kaggle-context
+/plugin marketplace add vks-g/kctx
+/plugin install kctx@kctx
 ```
 
 ## Headless CLI
@@ -144,12 +144,12 @@ Everything comes from the **official Kaggle API** (the same one the `kaggle` CLI
 - **Code**: the top public notebooks by votes, with Kaggle Learn exercises filtered out. Outputs are stripped and every notebook is attributed; public Kaggle notebooks are Apache 2.0 by default.
 - **Leaderboard**: the top 20 on the public leaderboard.
 
-kaggle-context is not affiliated with Kaggle. Follow each competition's rules, especially on sharing data and code.
+kctx is not affiliated with Kaggle. Follow each competition's rules, especially on sharing data and code.
 
 ## Development
 
 ```bash
-git clone https://github.com/vks-g/kaggle-context && cd kaggle-context
+git clone https://github.com/vks-g/kctx && cd kctx
 uv sync
 uv run pytest            # offline: synthetic fixtures, no Kaggle calls
 uv run ruff check src tests && uv run ruff format --check src tests
@@ -164,7 +164,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md).
 - [x] Step-by-step terminal prompts launched by `curl … | sh`
 - [x] Workspace folder, Claude skill, local MCP server
 - [x] Claude Code plugin
-- [ ] PyPI release (`uvx kaggle-context`)
+- [ ] PyPI release (`uvx kctx`)
 - [ ] Website with docs and a short install URL
 - [ ] Windows installer (`install.ps1`), competition search inside the prompts, an optional hosted MCP
 
