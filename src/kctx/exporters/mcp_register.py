@@ -1,4 +1,4 @@
-"""Mode 3: register the local kaggle-context MCP server with Claude.
+"""Mode 3: register the local kctx MCP server with Claude.
 
 The server is a local stdio process (``kctx mcp``) that Claude starts on demand. It uses
 your own Kaggle credentials and the on-disk cache, so no hosting is needed.
@@ -17,7 +17,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
 
-SERVER_NAME = "kaggle-context"
+SERVER_NAME = "kctx"
 TARGETS = ("claude-code", "claude-desktop", "project", "print")
 
 
@@ -41,7 +41,7 @@ def kctx_command() -> list[str]:
     if found:
         return [str(Path(found).resolve())]
     uvx = shutil.which("uvx")
-    return [uvx or "uvx", "kaggle-context"]
+    return [uvx or "uvx", "kctx"]
 
 
 def server_entry(competition: str | None = None) -> dict[str, object]:

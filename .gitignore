@@ -11,7 +11,7 @@ dist/
 htmlcov/
 
 # Generated competition bundles (never commit Kaggle content)
-/kaggle-context-out/
+/kctx-out/
 /out/
 
 # Secrets

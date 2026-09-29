@@ -8,11 +8,11 @@ from rich.console import Console
 from rich.markup import escape
 from rich.status import Status
 
-from kaggle_context.core.fetch import Progress
-from kaggle_context.core.models import CompetitionMeta
-from kaggle_context.core.slug import competition_url
-from kaggle_context.pipeline import ExportResult
-from kaggle_context.render.facts import format_date
+from kctx.core.fetch import Progress
+from kctx.core.models import CompetitionMeta
+from kctx.core.slug import competition_url
+from kctx.pipeline import ExportResult
+from kctx.render.facts import format_date
 
 SECTION_LABELS = {
     "overview": "overview",

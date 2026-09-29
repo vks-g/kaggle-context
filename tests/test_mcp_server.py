@@ -4,9 +4,9 @@ import pytest
 from conftest import SLUG, FakeClient
 from mcp.server.mcpserver.exceptions import ToolError
 
-from kaggle_context.core.cache import get_bundle
-from kaggle_context.core.fetch import FetchOptions
-from kaggle_context.mcp_server import build_server
+from kctx.core.cache import get_bundle
+from kctx.core.fetch import FetchOptions
+from kctx.mcp_server import build_server
 
 
 def text(result) -> str:

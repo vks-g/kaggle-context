@@ -13,18 +13,18 @@ from collections.abc import Iterator
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
-from kaggle_context.core.client import KaggleSource
-from kaggle_context.core.fetch import FetchOptions, Progress, _noop, fetch_bundle, whats_new
-from kaggle_context.core.models import Bundle
+from kctx.core.client import KaggleSource
+from kctx.core.fetch import FetchOptions, Progress, _noop, fetch_bundle, whats_new
+from kctx.core.models import Bundle
 
 BUNDLE_FILE = "bundle.json"
 
 
 def cache_root() -> Path:
-    if env := os.environ.get("KAGGLE_CONTEXT_CACHE"):
+    if env := os.environ.get("KCTX_CACHE"):
         return Path(env).expanduser()
     base = os.environ.get("XDG_CACHE_HOME") or Path.home() / ".cache"
-    return Path(base) / "kaggle-context"
+    return Path(base) / "kctx"
 
 
 def bundle_dir(slug: str) -> Path:

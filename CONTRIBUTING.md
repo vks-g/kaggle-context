@@ -16,12 +16,12 @@ Python ≥ 3.11. CI runs Linux and macOS on 3.11–3.14, plus `shellcheck instal
 
 | Path | What |
 |---|---|
-| `src/kaggle_context/core/` | Kaggle client wrapper, data model, fetch pipeline, cache, token budget |
-| `src/kaggle_context/render/` | HTML→markdown, notebooks→markdown, key-facts card, section renderers |
-| `src/kaggle_context/exporters/` | Workspace folder, Claude skill, MCP registration |
-| `src/kaggle_context/mcp_server.py` | The local stdio MCP server |
-| `src/kaggle_context/interactive.py` | The step-by-step prompts behind plain `kctx` (questionary) |
-| `src/kaggle_context/ui.py` | Terminal output shared by the prompts and the headless commands |
+| `src/kctx/core/` | Kaggle client wrapper, data model, fetch pipeline, cache, token budget |
+| `src/kctx/render/` | HTML→markdown, notebooks→markdown, key-facts card, section renderers |
+| `src/kctx/exporters/` | Workspace folder, Claude skill, MCP registration |
+| `src/kctx/mcp_server.py` | The local stdio MCP server |
+| `src/kctx/interactive.py` | The step-by-step prompts behind plain `kctx` (questionary) |
+| `src/kctx/ui.py` | Terminal output shared by the prompts and the headless commands |
 | `install.sh` | The `curl \| sh` installer |
 | `skills/`, `.claude-plugin/` | The generic skill and Claude Code plugin manifests |
 

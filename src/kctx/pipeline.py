@@ -5,10 +5,10 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from pathlib import Path
 
-from kaggle_context.core.models import Bundle
-from kaggle_context.exporters import mcp_register
-from kaggle_context.exporters.skill import export_skill, skill_name
-from kaggle_context.exporters.workspace import export_workspace
+from kctx.core.models import Bundle
+from kctx.exporters import mcp_register
+from kctx.exporters.skill import export_skill, skill_name
+from kctx.exporters.workspace import export_workspace
 
 MODES = ("folder", "skill", "mcp")
 
@@ -87,6 +87,6 @@ def run_exports(bundle: Bundle, plan: ExportPlan) -> ExportResult:
                 res.failed.append(f"MCP ({result.target}): {result.message}")
         if any(t in targets for t in ("claude-code", "claude-desktop", "project")):
             res.next_steps.append(
-                f'Restart Claude, then ask: "use kaggle-context to get the brief for {slug}"'
+                f'Restart Claude, then ask: "use kctx to get the brief for {slug}"'
             )
     return res

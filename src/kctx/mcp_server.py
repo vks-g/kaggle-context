@@ -16,15 +16,15 @@ from typing import Literal
 from mcp.server.mcpserver import MCPServer
 from mcp.server.mcpserver.exceptions import ResourceError, ToolError
 
-from kaggle_context import __version__
-from kaggle_context.core.budget import paginate
-from kaggle_context.core.cache import bundle_dir, get_bundle, iter_cached, load_bundle
-from kaggle_context.core.client import KaggleClient, KaggleError, KaggleSource
-from kaggle_context.core.fetch import fetch_notebook, fetch_topic, topic_ref, whats_new
-from kaggle_context.core.models import Bundle, Topic
-from kaggle_context.core.slug import competition_url, parse_competition
-from kaggle_context.render import sections as r
-from kaggle_context.render.facts import format_date
+from kctx import __version__
+from kctx.core.budget import paginate
+from kctx.core.cache import bundle_dir, get_bundle, iter_cached, load_bundle
+from kctx.core.client import KaggleClient, KaggleError, KaggleSource
+from kctx.core.fetch import fetch_notebook, fetch_topic, topic_ref, whats_new
+from kctx.core.models import Bundle, Topic
+from kctx.core.slug import competition_url, parse_competition
+from kctx.render import sections as r
+from kctx.render.facts import format_date
 
 PART_TOKENS = 12_000  # keep single tool results well under Claude Code's MCP output limit
 
@@ -42,7 +42,7 @@ def build_server(
     default_competition: str | None = None,
     client_factory: Callable[[], KaggleSource] = KaggleClient,
 ) -> MCPServer:
-    server = MCPServer(name="kaggle-context", instructions=INSTRUCTIONS, version=__version__)
+    server = MCPServer(name="kctx", instructions=INSTRUCTIONS, version=__version__)
     clients: list[KaggleSource] = []
 
     def client() -> KaggleSource:
@@ -273,7 +273,7 @@ def build_server(
         return (
             f"We're working on the Kaggle competition {bundle.meta.title} ({bundle.meta.url}).\n\n"
             f"{brief(bundle)}\n\n"
-            "Using the kaggle-context tools, read the rules and any solution write-ups, then propose a "
+            "Using the kctx tools, read the rules and any solution write-ups, then propose a "
             "validation strategy and a first baseline that fits the constraints above."
         )
 
