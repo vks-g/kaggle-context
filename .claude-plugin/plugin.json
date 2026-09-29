@@ -1,0 +1,18 @@
+{
+  "name": "kaggle-context",
+  "version": "0.1.0",
+  "description": "Kaggle competition context for Claude: overview, rules, data, top discussions and notebooks, as a skill and a local MCP server.",
+  "author": {
+    "name": "vks-g"
+  },
+  "homepage": "https://github.com/vks-g/kaggle-context",
+  "repository": "https://github.com/vks-g/kaggle-context",
+  "license": "MIT",
+  "keywords": ["kaggle", "competitions", "mcp", "context", "data-science"],
+  "mcpServers": {
+    "kaggle-context": {
+      "command": "uvx",
+      "args": ["--from", "git+https://github.com/vks-g/kaggle-context", "kctx", "mcp"]
+    }
+  }
+}
