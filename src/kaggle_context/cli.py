@@ -1,6 +1,6 @@
 """Command-line entry point.
 
-``kctx`` with no arguments (or with just a competition URL) opens the TUI.
+``kctx`` with no arguments (or with just a competition URL) asks a few questions inline.
 Subcommands do the same work headlessly, for scripts, CI, skills and agents.
 """
 
@@ -16,24 +16,11 @@ from kaggle_context import __version__
 from kaggle_context.core.models import SECTIONS
 
 app = typer.Typer(
-    help="Turn any Kaggle competition into Claude-ready context. Run `kctx` with no arguments for the TUI.",
+    help="Turn any Kaggle competition into Claude-ready context. Run `kctx` with no arguments to be asked step by step.",
     add_completion=False,
     no_args_is_help=False,
 )
 err = Console(stderr=True, soft_wrap=True)
-
-STATUS_ICON = {
-    "start": "…",
-    "progress": "…",
-    "done": "[green]✓[/]",
-    "error": "[red]✗[/]",
-    "skip": "[dim]-[/]",
-}
-
-
-def _progress(section: str, status: str, detail: str) -> None:
-    if status in ("done", "error"):
-        err.print(f"  {STATUS_ICON[status]} {section:<12} {detail}")
 
 
 def _split(value: str) -> tuple[str, ...]:
@@ -67,12 +54,13 @@ def fetch(
     sections: str = typer.Option(",".join(SECTIONS), help="Comma-separated sections to fetch"),
     refresh: bool = typer.Option(False, "--refresh", help="Ignore the cache and fetch again"),
 ) -> None:
-    """Fetch a competition and export it (headless version of the TUI)."""
+    """Fetch a competition and export it (the non-interactive version of `kctx`)."""
     from kaggle_context.core.cache import get_bundle
     from kaggle_context.core.client import KaggleClient, KaggleError
     from kaggle_context.core.fetch import FetchOptions
     from kaggle_context.core.slug import parse_competition
     from kaggle_context.pipeline import MODES, ExportPlan, run_exports
+    from kaggle_context.ui import print_result, progress_printer
 
     try:
         slug = parse_competition(competition)
@@ -91,7 +79,9 @@ def fetch(
     )
     err.print(f"Fetching [bold]{slug}[/] from Kaggle…")
     try:
-        bundle = get_bundle(KaggleClient(), slug, opts, refresh=refresh, progress=_progress)
+        bundle = get_bundle(
+            KaggleClient(), slug, opts, refresh=refresh, progress=progress_printer(err)
+        )
     except KaggleError as exc:
         _fail(str(exc))
 
@@ -104,14 +94,7 @@ def fetch(
         budget=budget,
     )
     result = run_exports(bundle, plan)
-    for line in result.done:
-        err.print(f"[green]✓[/] {line}")
-    for line in result.failed:
-        err.print(f"[red]✗[/] {line}")
-    if result.next_steps:
-        err.print("\n[bold]Next:[/]")
-        for step in result.next_steps:
-            err.print(f"  • {step}")
+    print_result(err, result)
     if result.failed and not result.done:
         raise typer.Exit(1)
 
@@ -128,6 +111,7 @@ def refresh(
     from kaggle_context.core.slug import parse_competition
     from kaggle_context.exporters.workspace import read_manifest
     from kaggle_context.pipeline import ExportPlan, run_exports
+    from kaggle_context.ui import print_result, progress_printer
 
     folder = Path(target).expanduser()
     manifest = read_manifest(folder) if folder.is_dir() else None
@@ -136,7 +120,7 @@ def refresh(
     except ValueError:
         _fail(f"{target!r} is neither a kaggle-context workspace nor a competition slug.")
     try:
-        bundle = get_bundle(KaggleClient(), slug, refresh=True, progress=_progress)
+        bundle = get_bundle(KaggleClient(), slug, refresh=True, progress=progress_printer(err))
     except KaggleError as exc:
         _fail(str(exc))
 
@@ -149,8 +133,7 @@ def refresh(
             skill_scope=settings.get("skill_scope", "user"),
             budget=settings.get("budget", 50_000),
         )
-        for line in run_exports(bundle, plan).done:
-            err.print(f"[green]✓[/] {line}")
+        print_result(err, run_exports(bundle, plan))
     new = len(bundle.changes.get("new_topics", []))
     active = len(bundle.changes.get("active_topics", []))
     if bundle.changes_since:
@@ -219,8 +202,7 @@ COMMANDS = {"fetch", "refresh", "search", "mcp", "login", "version"}
 def main() -> None:
     args = sys.argv[1:]
     if not args or (args[0] not in COMMANDS and not args[0].startswith("-")):
-        from kaggle_context.tui.app import run_tui
+        from kaggle_context.interactive import main as interactive
 
-        run_tui(args[0] if args else None)
-        return
+        sys.exit(interactive(args[0] if args else None))
     app()

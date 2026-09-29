@@ -3,7 +3,7 @@
 Why a wrapper:
 
 * ``import kaggle`` authenticates at import time and the API prints to stdout
-  (e.g. ``Next Page Token = ...``). Stray stdout corrupts both the TUI and the MCP
+  (e.g. ``Next Page Token = ...``). Stray stdout corrupts both the prompts and the MCP
   stdio protocol, so all Kaggle output is silenced here.
 * A missing credential makes the SDK call ``exit(1)``; we turn that into ``AuthError``.
 * Transient failures (429 / 5xx / connection errors) are retried with backoff.
@@ -165,7 +165,7 @@ class KaggleClient:
         return self.api.config_values.get("username")
 
     def login_with_browser(self) -> None:
-        """Run Kaggle's OAuth browser login. Prints to the terminal; call it outside the TUI."""
+        """Run Kaggle's OAuth browser login. Prints to the terminal."""
         api_cls = _load_api()
         api_cls().auth_login_cli()
         self._api = None
