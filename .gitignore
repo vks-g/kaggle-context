@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+build/
+dist/
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Generated competition bundles (never commit Kaggle content)
+/kaggle-context-out/
+/out/
+
+# Secrets
+kaggle.json
+credentials.json
+access_token
+.env
+.env.*
+
+# Local tooling
+.remember/
+.DS_Store
+.idea/
+.vscode/
