@@ -12,7 +12,7 @@
   "mcpServers": {
     "kctx": {
       "command": "uvx",
-      "args": ["--from", "git+https://github.com/vks-g/kctx", "kctx", "mcp"]
+      "args": ["kctx", "mcp"]
     }
   }
 }
