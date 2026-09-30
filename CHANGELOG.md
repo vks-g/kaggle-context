@@ -3,6 +3,7 @@
 ## Unreleased
 
 - The interactive competition prompt can search Kaggle by name and lets you choose a match.
+- Search follow-ups: a single word that isn't a competition slug (e.g. `gemma`) now searches instead of failing; the results list has a "search again" entry; Kaggle links that aren't competitions (e.g. `kaggle.com/datasets/…`) get a clear error instead of a search.
 - `install.sh` and the Claude Code plugin now install kctx from PyPI instead of from the GitHub repo.
 - README: an Install section with `pip install kctx`, `uv tool install kctx`, `pipx install kctx` and `uvx kctx`.
 
