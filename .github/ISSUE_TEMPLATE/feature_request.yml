@@ -1,0 +1,31 @@
+name: Feature request
+description: Suggest an idea or improvement for kctx
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem would this solve?
+      description: What were you trying to do with kctx, and where did it fall short?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: What would you like to happen?
+      description: The behaviour or command you have in mind. Examples help.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives you've considered
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: Ground rules
+      description: kctx only uses the official Kaggle API and never downloads or redistributes competition data.
+      options:
+        - label: This idea fits those rules
+          required: true
+        - label: I'd like to work on this myself

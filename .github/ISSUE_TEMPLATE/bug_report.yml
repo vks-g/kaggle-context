@@ -1,0 +1,57 @@
+name: Bug report
+description: Something in kctx doesn't work as expected
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting! Please **don't paste Kaggle API tokens** or other credentials.
+  - type: input
+    id: competition
+    attributes:
+      label: Competition
+      description: The competition URL or slug you ran kctx on. Most bugs depend on it.
+      placeholder: https://www.kaggle.com/competitions/titanic
+    validations:
+      required: true
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What you ran, what you expected, and what you got instead.
+      placeholder: |
+        Ran `kctx`, picked Workspace folder + MCP server …
+        Expected …, but …
+    validations:
+      required: true
+  - type: textarea
+    id: output
+    attributes:
+      label: Terminal output
+      description: Paste the relevant output or error (it's formatted as code automatically).
+      render: text
+  - type: dropdown
+    id: mode
+    attributes:
+      label: Which part?
+      multiple: true
+      options:
+        - Installer (curl | sh)
+        - Interactive prompts (kctx)
+        - Headless CLI (kctx fetch / refresh / search)
+        - Workspace folder
+        - Claude skill
+        - MCP server
+        - Other
+  - type: input
+    id: version
+    attributes:
+      label: kctx version
+      description: Output of `kctx version`
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: OS, Python version and terminal
+      placeholder: macOS 15, Python 3.13, Ghostty
