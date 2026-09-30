@@ -24,6 +24,7 @@ from kctx.core.client import (
     AuthError,
     KaggleClient,
     KaggleError,
+    NotFoundError,
     credentials_present,
     save_access_token,
 )
@@ -226,9 +227,11 @@ class Session:
     # 2. competition
     def competition(self, initial: str | None) -> CompetitionMeta:
         value = initial
+        picked = False  # True when ``value`` came from the search results
         while True:
             if value is None:
                 value = self.ask.text("Competition URL or search:")
+                picked = False
             try:
                 slug = parse_competition(value)
             except ValueError as exc:
@@ -237,11 +240,23 @@ class Session:
                     self.console.print(f"[red]✗[/] {escape(str(exc))}")
                     value = None
                     continue
-                value = self._search(query)
+                value, picked = self._search(query), True
                 continue
             try:
                 with self.console.status(f"Looking up {slug}…"):
                     meta, entered = self._lookup(slug)
+            except NotFoundError as exc:
+                # A single typed word like "gemma" parses as a slug; if no competition has
+                # that slug, treat it as a search instead of a dead end.
+                if not picked and not _looks_like_link(value.strip()):
+                    self.console.print(
+                        f"[dim]No competition is called '{escape(slug)}', searching instead.[/]"
+                    )
+                    value, picked = self._search(value.strip()), True
+                    continue
+                self.console.print(f"[red]✗[/] Couldn't find '{escape(slug)}': {escape(str(exc))}")
+                value = None
+                continue
             except KaggleError as exc:
                 self.console.print(f"[red]✗[/] Couldn't find '{escape(slug)}': {escape(str(exc))}")
                 value = None
