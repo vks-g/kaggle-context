@@ -232,31 +232,7 @@ class Session:
                     self.console.print(f"[red]✗[/] {escape(str(exc))}")
                     value = None
                     continue
-                try:
-                    with self.console.status(f"Searching Kaggle for {escape(query)}…"):
-                        matches = self.client.search_competitions(query)
-                except KaggleError as search_exc:
-                    self.console.print(
-                        f"[red]✗[/] Couldn't search Kaggle: {escape(str(search_exc))}"
-                    )
-                    value = None
-                    continue
-
-                choices = []
-                for match in matches:
-                    try:
-                        match_slug = parse_competition(match.get("ref") or match.get("url") or "")
-                    except ValueError:
-                        continue
-                    deadline = str(match.get("deadline") or "")[:10] or "no deadline"
-                    teams = match.get("teamCount") or 0
-                    title = str(match.get("title") or match_slug)
-                    choices.append(Choice(f"{title} · {deadline} · {teams} teams", match_slug))
-                if not choices:
-                    self.console.print(f"[yellow]![/] No competitions found for {escape(query)}.")
-                    value = None
-                    continue
-                value = self.ask.select("Choose a competition:", choices)
+                value = self._search(query)
                 continue
             try:
                 with self.console.status(f"Looking up {slug}…"):
@@ -267,6 +243,30 @@ class Session:
                 continue
             self.console.print(competition_card(meta, entered))
             return meta
+
+    def _search(self, query: str) -> str | None:
+        """Search Kaggle for ``query`` and let the user pick a match. ``None`` means ask again."""
+        try:
+            with self.console.status(f"Searching Kaggle for {escape(query)}…"):
+                matches = self.client.search_competitions(query)
+        except KaggleError as exc:
+            self.console.print(f"[red]✗[/] Couldn't search Kaggle: {escape(str(exc))}")
+            return None
+
+        choices = []
+        for match in matches:
+            try:
+                match_slug = parse_competition(match.get("ref") or match.get("url") or "")
+            except ValueError:
+                continue
+            deadline = str(match.get("deadline") or "")[:10] or "no deadline"
+            teams = match.get("teamCount") or 0
+            title = str(match.get("title") or match_slug)
+            choices.append(Choice(f"{title} · {deadline} · {teams} teams", match_slug))
+        if not choices:
+            self.console.print(f"[yellow]![/] No competitions found for {escape(query)}.")
+            return None
+        return self.ask.select("Choose a competition:", choices)
 
     def _lookup(self, slug: str) -> tuple[CompetitionMeta, bool | None]:
         comp = self.client.competition(slug)
