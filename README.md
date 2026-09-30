@@ -31,7 +31,7 @@ Run `kctx`. It asks you a few questions right in your terminal. Move with the ar
 
 ```
 ✓ Kaggle: signed in as you
-? Competition URL: https://www.kaggle.com/competitions/titanic
+    ? Competition URL or search: titanic
   Titanic - Machine Learning from Disaster
   Metric: Categorization Accuracy  ·  Deadline: 2030-01-01 00:00 UTC  ·  Teams: 10,307
 ? How should Claude get the context? (↑/↓ move · enter or space to tick · then pick Continue)
@@ -51,6 +51,8 @@ Fetching Titanic - Machine Learning from Disaster
 ```
 
 If you have no Kaggle credentials yet, it first offers a browser login or lets you paste an API token.
+
+You can paste a competition URL or slug, or type a few words to search Kaggle and choose a match from the arrow-key list.
 
 Skip the URL question by passing it: `kctx https://www.kaggle.com/competitions/titanic` (or `curl … | sh -s -- <url>` with the one-liner).
 

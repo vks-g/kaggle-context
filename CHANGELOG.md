@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- The interactive competition prompt can search Kaggle by name and lets you choose a match.
 - `install.sh` and the Claude Code plugin now install kctx from PyPI instead of from the GitHub repo.
 - README: an Install section with `pip install kctx`, `uv tool install kctx`, `pipx install kctx` and `uvx kctx`.
 
