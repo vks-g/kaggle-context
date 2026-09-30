@@ -52,7 +52,7 @@ Fetching Titanic - Machine Learning from Disaster
 
 If you have no Kaggle credentials yet, it first offers a browser login or lets you paste an API token.
 
-You can paste a competition URL or slug, or type a few words to search Kaggle and choose a match from the arrow-key list.
+You can paste a competition URL or slug, or type a word or two to search Kaggle (e.g. `gemma`) and pick a match from the arrow-key list. If none of the matches is right, choose **search again**.
 
 Skip the URL question by passing it: `kctx https://www.kaggle.com/competitions/titanic` (or `curl … | sh -s -- <url>` with the one-liner).
 
