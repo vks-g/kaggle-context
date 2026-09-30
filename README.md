@@ -1,7 +1,7 @@
 # kctx
 
 [![CI](https://github.com/vks-g/kctx/actions/workflows/ci.yml/badge.svg)](https://github.com/vks-g/kctx/actions/workflows/ci.yml)
-[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/vks-g/kctx/blob/main/LICENSE)
 
 **Give Claude the full context of any Kaggle competition in one command:** the overview, evaluation metric, rules, data description, top discussions (winning solution write-ups first) and top public notebooks.
 
@@ -156,7 +156,7 @@ uv run ruff check src tests && uv run ruff format --check src tests
 uv run kctx              # the step-by-step prompts, from your checkout
 ```
 
-See [CONTRIBUTING.md](CONTRIBUTING.md).
+See [CONTRIBUTING.md](https://github.com/vks-g/kctx/blob/main/CONTRIBUTING.md).
 
 ## Roadmap
 
