@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.1.0 (unreleased)
+## 0.1.0 (2026-09-30)
 
 - Renamed from kaggle-context to **kctx**: repo `vks-g/kctx`, package `kctx`, MCP server `kctx`, cache `~/.cache/kctx`. Skills and workspaces made under the old name are still recognised and updated in place.
 - Fetch engine on the official Kaggle API: overview, rules, data description and file list, discussions (solution write-ups first), top notebooks, leaderboard; on-disk cache; "what's new" on refresh.
