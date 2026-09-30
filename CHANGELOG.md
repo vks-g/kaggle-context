@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- `install.sh` and the Claude Code plugin now install kctx from PyPI instead of from the GitHub repo.
+
 ## 0.1.0 (2026-09-30)
 
 - Renamed from kaggle-context to **kctx**: repo `vks-g/kctx`, package `kctx`, MCP server `kctx`, cache `~/.cache/kctx`. Skills and workspaces made under the old name are still recognised and updated in place.

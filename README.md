@@ -1,6 +1,7 @@
 # kctx
 
 [![CI](https://github.com/vks-g/kctx/actions/workflows/ci.yml/badge.svg)](https://github.com/vks-g/kctx/actions/workflows/ci.yml)
+[![PyPI](https://img.shields.io/pypi/v/kctx.svg)](https://pypi.org/project/kctx/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/vks-g/kctx/blob/main/LICENSE)
 
 **Give Claude the full context of any Kaggle competition in one command:** the overview, evaluation metric, rules, data description, top discussions (winning solution write-ups first) and top public notebooks.
@@ -33,6 +34,8 @@ Fetching Titanic - Machine Learning from Disaster
 ```
 
 If you have no Kaggle credentials yet, it first offers a browser login or lets you paste an API token.
+
+Already have uv or pipx? `uv tool install kctx` (or `pipx install kctx`) then run `kctx`; or try it without installing: `uvx kctx`.
 
 Skip the URL question by passing it: `curl … | sh -s -- https://www.kaggle.com/competitions/titanic`. After the first run, just type `kctx`.
 
@@ -164,7 +167,7 @@ See [CONTRIBUTING.md](https://github.com/vks-g/kctx/blob/main/CONTRIBUTING.md).
 - [x] Step-by-step terminal prompts launched by `curl … | sh`
 - [x] Workspace folder, Claude skill, local MCP server
 - [x] Claude Code plugin
-- [ ] PyPI release (`uvx kctx`)
+- [x] PyPI release (`uvx kctx`)
 - [ ] Website with docs and a short install URL
 - [ ] Windows installer (`install.ps1`), competition search inside the prompts, an optional hosted MCP
 
