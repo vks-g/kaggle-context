@@ -162,6 +162,11 @@ def _int_validator(value: str) -> str | None:
     return None if value.strip().isdigit() else "Enter a whole number"
 
 
+def _looks_like_link(text: str) -> bool:
+    """A pasted link (even without https://) gets the URL error instead of a search."""
+    return "://" in text or text.startswith("www.") or "kaggle.com" in text or "/" in text
+
+
 class Session:
     def __init__(
         self,
@@ -228,7 +233,7 @@ class Session:
                 slug = parse_competition(value)
             except ValueError as exc:
                 query = value.strip()
-                if not query or "://" in query or query.startswith("www."):
+                if not query or _looks_like_link(query):
                     self.console.print(f"[red]✗[/] {escape(str(exc))}")
                     value = None
                     continue

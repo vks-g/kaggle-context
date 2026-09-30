@@ -162,6 +162,19 @@ def test_competition_search_without_matches_reprompts(cache, tmp_path: Path) -> 
     assert client.search_queries == ["climate policy"]
 
 
+def test_non_competition_kaggle_link_is_explained_not_searched(cache, tmp_path: Path) -> None:
+    client = TermClient()
+    prompter = ScriptedPrompter(
+        "kaggle.com/datasets/someone/some-data", SLUG, ["folder"], str(tmp_path), False
+    )
+
+    result, out = run(prompter, client, cwd=tmp_path)
+
+    assert result is not None
+    assert "not a competition page" in out
+    assert client.search_queries == []
+
+
 def test_mcp_targets_offer_project_only_with_folder(cache, tmp_path: Path, monkeypatch) -> None:
     monkeypatch.setattr("shutil.which", lambda name: None)  # no claude CLI installed
     prompter = ScriptedPrompter(["mcp"], ["print"], False)
