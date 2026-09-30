@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Question or idea to discuss
+    url: https://github.com/vks-g/kctx/discussions
+    about: Ask how to use kctx or talk through an idea before opening an issue.
+  - name: Security vulnerability
+    url: https://github.com/vks-g/kctx/security/advisories/new
+    about: Report security problems privately, not as a public issue.

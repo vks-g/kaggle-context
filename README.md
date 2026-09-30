@@ -164,7 +164,16 @@ Everything comes from the **official Kaggle API** (the same one the `kaggle` CLI
 
 kctx is not affiliated with Kaggle. Follow each competition's rules, especially on sharing data and code.
 
-## Development
+## Contributing
+
+Contributions are welcome, from bug reports to new features. To get started:
+
+- Read [CONTRIBUTING.md](https://github.com/vks-g/kctx/blob/main/CONTRIBUTING.md). It covers dev setup, the ground rules and how PRs are reviewed.
+- Look for issues labelled [good first issue](https://github.com/vks-g/kctx/labels/good%20first%20issue) or [help wanted](https://github.com/vks-g/kctx/labels/help%20wanted).
+- Ask questions and float ideas in [Discussions](https://github.com/vks-g/kctx/discussions).
+- Report security problems privately (see [SECURITY.md](https://github.com/vks-g/kctx/blob/main/SECURITY.md)).
+
+Everyone taking part follows the [Code of Conduct](https://github.com/vks-g/kctx/blob/main/CODE_OF_CONDUCT.md).
 
 ```bash
 git clone https://github.com/vks-g/kctx && cd kctx
@@ -173,8 +182,6 @@ uv run pytest            # offline: synthetic fixtures, no Kaggle calls
 uv run ruff check src tests && uv run ruff format --check src tests
 uv run kctx              # the step-by-step prompts, from your checkout
 ```
-
-See [CONTRIBUTING.md](https://github.com/vks-g/kctx/blob/main/CONTRIBUTING.md).
 
 ## Roadmap
 
