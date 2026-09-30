@@ -163,6 +163,9 @@ def _int_validator(value: str) -> str | None:
     return None if value.strip().isdigit() else "Enter a whole number"
 
 
+SEARCH_AGAIN = ""  # value of the "search again" entry in the results list
+
+
 def _looks_like_link(text: str) -> bool:
     """A pasted link (even without https://) gets the URL error instead of a search."""
     return "://" in text or text.startswith("www.") or "kaggle.com" in text or "/" in text
@@ -286,7 +289,9 @@ class Session:
         if not choices:
             self.console.print(f"[yellow]![/] No competitions found for {escape(query)}.")
             return None
-        return self.ask.select("Choose a competition:", choices)
+        choices.append(Choice("↩ None of these, search again", SEARCH_AGAIN))
+        picked = self.ask.select("Choose a competition:", choices)
+        return None if picked == SEARCH_AGAIN else picked
 
     def _lookup(self, slug: str) -> tuple[CompetitionMeta, bool | None]:
         comp = self.client.competition(slug)
