@@ -27,7 +27,7 @@ Check these in order and use the first one you find:
 kctx fetch <url-or-slug> --mode folder --out .
 ```
 
-If `kctx` isn't installed, run this instead: `uvx --from git+https://github.com/vks-g/kctx kctx fetch <url-or-slug> --mode folder --out .`
+If `kctx` isn't installed, run this instead: `uvx kctx fetch <url-or-slug> --mode folder --out .`
 
 The fetch uses the user's own Kaggle credentials. If it fails with a credentials error, ask the user to run `kctx login`.
 
