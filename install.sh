@@ -5,11 +5,11 @@
 #   curl -fsSL https://raw.githubusercontent.com/vks-g/kctx/main/install.sh | sh -s -- <competition-url>
 #
 # Environment:
-#   KCTX_SPEC    what to install (default: the GitHub repo; e.g. "kctx" once on PyPI)
+#   KCTX_SPEC    what to install (default: kctx from PyPI; e.g. "git+https://github.com/vks-g/kctx" for main)
 #   KCTX_NO_RUN  set to 1 to install without starting kctx
 set -eu
 
-SPEC="${KCTX_SPEC:-git+https://github.com/vks-g/kctx}"
+SPEC="${KCTX_SPEC:-kctx}"
 
 say() { printf '%s\n' "$*"; }
 die() {
