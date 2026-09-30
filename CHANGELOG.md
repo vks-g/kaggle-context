@@ -3,6 +3,7 @@
 ## Unreleased
 
 - `install.sh` and the Claude Code plugin now install kctx from PyPI instead of from the GitHub repo.
+- README: an Install section with `pip install kctx`, `uv tool install kctx`, `pipx install kctx` and `uvx kctx`.
 
 ## 0.1.0 (2026-09-30)
 

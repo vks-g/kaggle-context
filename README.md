@@ -6,11 +6,28 @@
 
 **Give Claude the full context of any Kaggle competition in one command:** the overview, evaluation metric, rules, data description, top discussions (winning solution write-ups first) and top public notebooks.
 
+## Install
+
+kctx is on [PyPI](https://pypi.org/project/kctx/). Pick any one of these; each gives you the `kctx` command (Python 3.11+):
+
+```bash
+pip install kctx                 # plain pip (inside a virtualenv is best)
+uv tool install kctx             # uv: isolated install, recommended
+pipx install kctx                # pipx: isolated install
+uvx kctx                         # uv: run it once without installing
+```
+
+No Python or uv yet? This one-liner installs uv (which fetches Python), installs kctx and starts it:
+
 ```bash
 curl -fsSL https://raw.githubusercontent.com/vks-g/kctx/main/install.sh | sh
 ```
 
-That command installs `kctx` and asks you a few questions right in your terminal. Move with the arrow keys; in multi-choice questions, **enter (or space) ticks an option** and you finish by picking **Continue**:
+To upgrade later: `pip install -U kctx`, `uv tool upgrade kctx` or `pipx upgrade kctx`.
+
+## Quick start
+
+Run `kctx`. It asks you a few questions right in your terminal. Move with the arrow keys; in multi-choice questions, **enter (or space) ticks an option** and you finish by picking **Continue**:
 
 ```
 ✓ Kaggle: signed in as you
@@ -35,9 +52,7 @@ Fetching Titanic - Machine Learning from Disaster
 
 If you have no Kaggle credentials yet, it first offers a browser login or lets you paste an API token.
 
-Already have uv or pipx? `uv tool install kctx` (or `pipx install kctx`) then run `kctx`; or try it without installing: `uvx kctx`.
-
-Skip the URL question by passing it: `curl … | sh -s -- https://www.kaggle.com/competitions/titanic`. After the first run, just type `kctx`.
+Skip the URL question by passing it: `kctx https://www.kaggle.com/competitions/titanic` (or `curl … | sh -s -- <url>` with the one-liner).
 
 ## Which mode should I pick?
 
