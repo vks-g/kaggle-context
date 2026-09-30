@@ -118,7 +118,9 @@ def test_bad_then_unknown_then_good_competition(cache, tmp_path: Path) -> None:
     result, out = run(prompter, TermClient(), initial="https://example.com/x", cwd=tmp_path)
     assert result is not None
     assert "Not a kaggle.com URL" in out
-    assert "Couldn't find 'no-such-comp'" in out
+    # a typed slug that doesn't exist becomes a search; with no matches we ask again
+    assert "No competition is called 'no-such-comp', searching instead." in out
+    assert "No competitions found for no-such-comp" in out
 
 
 def test_competition_search_selects_result(cache, tmp_path: Path) -> None:
@@ -160,6 +162,34 @@ def test_competition_search_without_matches_reprompts(cache, tmp_path: Path) -> 
     assert result is not None and not result.failed, out
     assert "No competitions found for climate policy" in out
     assert client.search_queries == ["climate policy"]
+
+
+def test_single_word_that_is_not_a_slug_falls_back_to_search(cache, tmp_path: Path) -> None:
+    client = TermClient()
+    client.search_results = [
+        {"ref": f"https://www.kaggle.com/competitions/{SLUG}", "title": "Demo Competition"}
+    ]
+    prompter = ScriptedPrompter("demo", SLUG, ["folder"], str(tmp_path), False)
+
+    result, out = run(prompter, client, cwd=tmp_path)
+
+    assert result is not None and not result.failed, out
+    assert "No competition is called 'demo', searching instead." in out
+    assert client.search_queries == ["demo"]
+    assert [kind for kind, _, _ in prompter.asked][:2] == ["text", "select"]
+
+
+def test_pasted_url_with_unknown_slug_is_not_searched(cache, tmp_path: Path) -> None:
+    client = TermClient()
+    prompter = ScriptedPrompter(SLUG, ["folder"], str(tmp_path), False)
+
+    result, out = run(
+        prompter, client, initial="https://www.kaggle.com/competitions/no-such-comp", cwd=tmp_path
+    )
+
+    assert result is not None
+    assert "Couldn't find 'no-such-comp'" in out
+    assert client.search_queries == []
 
 
 def test_non_competition_kaggle_link_is_explained_not_searched(cache, tmp_path: Path) -> None:
