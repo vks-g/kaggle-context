@@ -164,6 +164,22 @@ def test_competition_search_without_matches_reprompts(cache, tmp_path: Path) -> 
     assert client.search_queries == ["climate policy"]
 
 
+def test_search_again_from_the_results_list(cache, tmp_path: Path) -> None:
+    client = TermClient()
+    client.search_results = [
+        {"ref": "https://www.kaggle.com/competitions/other-comp", "title": "Other Competition"}
+    ]
+    prompter = ScriptedPrompter("some words", "", SLUG, ["folder"], str(tmp_path), False)
+
+    result, out = run(prompter, client, cwd=tmp_path)
+
+    assert result is not None and not result.failed, out
+    labels = [label for label, _ in prompter.asked[1][2]]
+    assert labels[-1] == "↩ None of these, search again"
+    assert [kind for kind, _, _ in prompter.asked][:3] == ["text", "select", "text"]
+    assert "Demo Competition" in out
+
+
 def test_single_word_that_is_not_a_slug_falls_back_to_search(cache, tmp_path: Path) -> None:
     client = TermClient()
     client.search_results = [
