@@ -162,14 +162,6 @@ def _int_validator(value: str) -> str | None:
     return None if value.strip().isdigit() else "Enter a whole number"
 
 
-def _url_validator(value: str) -> str | None:
-    try:
-        parse_competition(value)
-    except ValueError as exc:
-        return str(exc)
-    return None
-
-
 class Session:
     def __init__(
         self,
@@ -231,12 +223,40 @@ class Session:
         value = initial
         while True:
             if value is None:
-                value = self.ask.text("Competition URL:", validate=_url_validator)
+                value = self.ask.text("Competition URL or search:")
             try:
                 slug = parse_competition(value)
             except ValueError as exc:
-                self.console.print(f"[red]✗[/] {escape(str(exc))}")
-                value = None
+                query = value.strip()
+                if not query or "://" in query or query.startswith("www."):
+                    self.console.print(f"[red]✗[/] {escape(str(exc))}")
+                    value = None
+                    continue
+                try:
+                    with self.console.status(f"Searching Kaggle for {escape(query)}…"):
+                        matches = self.client.search_competitions(query)
+                except KaggleError as search_exc:
+                    self.console.print(
+                        f"[red]✗[/] Couldn't search Kaggle: {escape(str(search_exc))}"
+                    )
+                    value = None
+                    continue
+
+                choices = []
+                for match in matches:
+                    try:
+                        match_slug = parse_competition(match.get("ref") or match.get("url") or "")
+                    except ValueError:
+                        continue
+                    deadline = str(match.get("deadline") or "")[:10] or "no deadline"
+                    teams = match.get("teamCount") or 0
+                    title = str(match.get("title") or match_slug)
+                    choices.append(Choice(f"{title} · {deadline} · {teams} teams", match_slug))
+                if not choices:
+                    self.console.print(f"[yellow]![/] No competitions found for {escape(query)}.")
+                    value = None
+                    continue
+                value = self.ask.select("Choose a competition:", choices)
                 continue
             try:
                 with self.console.status(f"Looking up {slug}…"):

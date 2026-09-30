@@ -105,6 +105,8 @@ class FakeClient:
 
     def __init__(self) -> None:
         self.calls: list[str] = []
+        self.search_queries: list[str] = []
+        self.search_results: list[dict[str, Any]] = []
         self.search_hit = True
         self.fail: dict[str, Exception] = {}
         self.new_topics: list[dict[str, Any]] = []
@@ -113,6 +115,13 @@ class FakeClient:
         self.calls.append(name)
         if name in self.fail:
             raise self.fail[name]
+
+    def search_competitions(
+        self, query: str = "", group: str | None = None
+    ) -> list[dict[str, Any]]:
+        self._maybe_fail("search_competitions")
+        self.search_queries.append(query)
+        return self.search_results
 
     def competition(self, slug: str) -> dict[str, Any] | None:
         self._maybe_fail("competition")

@@ -60,7 +60,7 @@ class ScriptedPrompter:
         return self._next("password", message)
 
     def select(self, message: str, choices: list[Choice]) -> Any:
-        return self._next("select", message, [c.value for c in choices])
+        return self._next("select", message, [(c.label, c.value) for c in choices])
 
     def checkbox(self, message: str, choices: list[Choice]) -> list[Any]:
         return self._next("checkbox", message, [(c.value, c.checked) for c in choices])
@@ -119,6 +119,47 @@ def test_bad_then_unknown_then_good_competition(cache, tmp_path: Path) -> None:
     assert result is not None
     assert "Not a kaggle.com URL" in out
     assert "Couldn't find 'no-such-comp'" in out
+
+
+def test_competition_search_selects_result(cache, tmp_path: Path) -> None:
+    client = TermClient()
+    client.search_results = [
+        {
+            "ref": "https://www.kaggle.com/competitions/demo-comp",
+            "title": "Demo Competition",
+            "deadline": "2099-01-01T23:59:00Z",
+            "teamCount": 1234,
+        },
+        {
+            "ref": "https://www.kaggle.com/competitions/another-comp",
+            "title": "Another Competition",
+            "deadline": "2098-12-31T00:00:00Z",
+            "teamCount": 56,
+        },
+    ]
+    prompter = ScriptedPrompter("machine learning", "demo-comp", ["folder"], str(tmp_path), False)
+
+    result, out = run(prompter, client, cwd=tmp_path)
+
+    assert result is not None and not result.failed, out
+    assert client.search_queries == ["machine learning"]
+    assert prompter.asked[1][2][0] == (
+        "Demo Competition · 2099-01-01 · 1234 teams",
+        "demo-comp",
+    )
+    assert "Demo Competition" in out
+    assert [kind for kind, _, _ in prompter.asked][:3] == ["text", "select", "checkbox"]
+
+
+def test_competition_search_without_matches_reprompts(cache, tmp_path: Path) -> None:
+    client = TermClient()
+    prompter = ScriptedPrompter("climate policy", SLUG, ["folder"], str(tmp_path), False)
+
+    result, out = run(prompter, client, cwd=tmp_path)
+
+    assert result is not None and not result.failed, out
+    assert "No competitions found for climate policy" in out
+    assert client.search_queries == ["climate policy"]
 
 
 def test_mcp_targets_offer_project_only_with_folder(cache, tmp_path: Path, monkeypatch) -> None:
